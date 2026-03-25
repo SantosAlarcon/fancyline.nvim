@@ -26,7 +26,7 @@ A beautiful, fast, and highly configurable Neovim statusline with icons and deco
 
 ```lua
 {
-  "your-name/fancyline",
+  "SantosAlarcon/fancyline.nvim",
   lazy = false,
   priority = 1000,
   dependencies = {
@@ -39,12 +39,26 @@ A beautiful, fast, and highly configurable Neovim statusline with icons and deco
 
 ```lua
 use {
-  "your-name/fancyline",
+  "SantosAlarcon/fancyline.nvim",
   requires = { "nvim-tree/nvim-web-devicons" },
   config = function()
     require("fancyline").setup()
   end
 }
+```
+
+### vim.pack
+
+```lua
+vim.pack.add({
+    'https://www.github.com/SantosAlarcon/fancyline.nvim'
+})
+```
+
+### mini.deps
+
+```lua
+MiniDeps.add("SantosAlarcon/fancyline.nvim")
 ```
 
 ## Quick Start
