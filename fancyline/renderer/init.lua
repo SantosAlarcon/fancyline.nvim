@@ -20,8 +20,16 @@ local component_providers = {
   git_diff = require("fancyline.components.git_diff"),
   file = require("fancyline.components.file"),
   diagnostics = require("fancyline.components.diagnostics"),
+  errors = require("fancyline.components.errors"),
+  warnings = require("fancyline.components.warnings"),
+  infos = require("fancyline.components.infos"),
+  hints = require("fancyline.components.hints"),
   lsp = require("fancyline.components.lsp"),
+  lsp_progress = require("fancyline.components.lsp_progress"),
   filetype = require("fancyline.components.filetype"),
+  encoding = require("fancyline.components.encoding"),
+  indent = require("fancyline.components.indent"),
+  position = require("fancyline.components.position"),
   cursor = require("fancyline.components.cursor"),
 }
 
@@ -84,7 +92,7 @@ function M.render(config)
               rendered = border.render_with_icon(
                 result.icon,
                 result.text,
-                result.style or "round",
+                result.style or "none",
                 result.highlight,
                 result.fg,
                 result.bg,
@@ -95,7 +103,7 @@ function M.render(config)
               rendered = border.render_component(
                 result.icon,
                 result.text,
-                result.style or "round",
+                result.style or "none",
                 result.highlight,
                 result.fg,
                 result.bg,

@@ -8,7 +8,17 @@ local throttle = require("fancyline.utils.throttle")
 
 local function load_config(opts)
   local default_config = require("fancyline.config")
-  config = vim.tbl_deep_extend("force", default_config, opts or {})
+
+  -- Load preset if specified
+  if opts and opts.preset then
+    local presets = require("fancyline.presets")
+    local preset_config = presets.load(opts.preset)
+    -- Merge preset with user opts (user opts override preset)
+    config = vim.tbl_deep_extend("force", default_config, preset_config, opts or {})
+  else
+    config = vim.tbl_deep_extend("force", default_config, opts or {})
+  end
+
   return config
 end
 

@@ -33,5 +33,11 @@ return {
     cursor = "#f8f8f2",
     separator = "#49483e",
     border = "#49483e",
+    git_untracked = "#e4db79",
+    git_diff = "#a6e22e",
+    encoding = "#e2e2e2",
+    indent = "#49483e",
+    position = "#49483e",
+    background = "transparent",
   },
 }

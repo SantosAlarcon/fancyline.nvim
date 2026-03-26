@@ -134,6 +134,7 @@ function M.get_default()
     git_added = "#98c379",
     git_removed = "#e06c75",
     git_changed = "#e5c07b",
+    git_untracked = "#e5c07b",
     git_diff = "#98c379",
     file = "#98c379",
     file_modified = "#e5c07b",
@@ -147,6 +148,7 @@ function M.get_default()
     cursor = "#abb2bf",
     separator = "#5c6370",
     border = "#5c6370",
+    background = "transparent",
   }
 end
 
@@ -190,6 +192,15 @@ function M.apply(theme)
   vim.api.nvim_set_hl(0, "FancylineCursor", { fg = theme.cursor, bg = "NONE" })
   vim.api.nvim_set_hl(0, "FancylineSeparator", { fg = theme.separator, bg = "NONE" })
   vim.api.nvim_set_hl(0, "FancylineBorder", { fg = theme.border, bg = "NONE" })
+
+  -- Apply StatusLine background based on theme setting
+  if theme.background == "transparent" then
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE" })
+  elseif theme.background then
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = "NONE" })
+  end
 end
 
 return M

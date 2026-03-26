@@ -192,6 +192,20 @@ function M.render_with_icon(icon_cfg, text, style_name, highlight, text_fg, text
     return table.concat(parts, "")
   end
 
+  -- None style: no borders, just icon and text with spacing
+  if style_name == "none" then
+    if icon_data.symbol and icon_data.symbol ~= "" then
+      table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol .. style.icon_gap)
+    end
+    if text and text ~= "" then
+      table.insert(parts, "%#" .. text_hl .. "#" .. text)
+    end
+    if #parts > 0 then
+      table.insert(parts, "%#FancylineReset#")
+    end
+    return table.concat(parts, "")
+  end
+
   -- Normal style: border around everything
   table.insert(parts, border_hl .. style.left)
 
