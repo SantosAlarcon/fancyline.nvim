@@ -1,9 +1,9 @@
 return {
   separator = " ",
   sections = {
-    left = { "file", "errors", "warnings", "infos", "hints", "git_branch" },
+    left = { "file", "git_branch", "git_diff", "errors", "warnings", "infos", "hints" },
     center = {},
-    right = { "encoding", "indent", "position", "filetype" },
+    right = { "lsp", "encoding", "indent", "position", "filetype" },
   },
   components = {
     mode = {
@@ -19,29 +19,32 @@ return {
       style = "none",
     },
     errors = {
-      icon = "󰅜",
+      icon = "",
       style = "none",
     },
     warnings = {
-      icon = "󰀦",
+      icon = "",
       style = "none",
     },
     infos = {
-      icon = "󰀿",
+      icon = "",
       style = "none",
     },
     hints = {
-      icon = "󰛿",
+      icon = "",
       style = "none",
     },
     encoding = {
-      icon = "󰈔",
+      icon = "",
       style = "none",
     },
     indent = {
       icon = "󰌒",
       style = "none",
     },
+	lsp = {
+		style = "none"
+	},
     position = {
       icon = "󰀹",
       format = "Ln %l, Col %c",

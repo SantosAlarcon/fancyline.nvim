@@ -53,7 +53,7 @@ local function create_highlights()
   for mode, hl_name in pairs(mode_highlights) do
     local user_color = mode_colors[mode]
     if user_color then
-      vim.api.nvim_set_hl(0, hl_name, { fg = user_color, bg = "NONE", bold = true })
+      vim.api.nvim_set_hl(0, hl_name, { fg = user_color, bg = "NONE", bold = false })
     end
   end
 

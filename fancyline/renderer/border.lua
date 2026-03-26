@@ -49,7 +49,7 @@ local function get_hl_name(name, fg, bg)
     vim.api.nvim_set_hl(0, hl_name, {
       fg = fg,
       bg = bg,
-      bold = true,
+      bold = false,
     })
     content_cache[key] = hl_name
   end

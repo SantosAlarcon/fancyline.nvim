@@ -158,48 +158,48 @@ function M.apply(theme)
   end
 
   -- Mode highlights
-  vim.api.nvim_set_hl(0, "FancylineModeNormal", { fg = theme.modes.n, bg = "NONE", bold = true })
-  vim.api.nvim_set_hl(0, "FancylineModeInsert", { fg = theme.modes.i, bg = "NONE", bold = true })
-  vim.api.nvim_set_hl(0, "FancylineModeVisual", { fg = theme.modes.v, bg = "NONE", bold = true })
-  vim.api.nvim_set_hl(0, "FancylineModeSelect", { fg = theme.modes.s, bg = "NONE", bold = true })
-  vim.api.nvim_set_hl(0, "FancylineModeTerminal", { fg = theme.modes.t, bg = "NONE", bold = true })
-  vim.api.nvim_set_hl(0, "FancylineModeCommand", { fg = theme.modes.c, bg = "NONE", bold = true })
-  vim.api.nvim_set_hl(0, "FancylineModeReplace", { fg = theme.modes.r, bg = "NONE", bold = true })
+  vim.api.nvim_set_hl(0, "FancylineModeNormal", { fg = theme.modes.n, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineModeInsert", { fg = theme.modes.i, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineModeVisual", { fg = theme.modes.v, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineModeSelect", { fg = theme.modes.s, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineModeTerminal", { fg = theme.modes.t, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineModeCommand", { fg = theme.modes.c, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineModeReplace", { fg = theme.modes.r, bg = "NONE", bold = false })
 
   -- Git highlights
-  vim.api.nvim_set_hl(0, "FancylineGitBranch", { fg = theme.git_branch, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineGitAdded", { fg = theme.git_added, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineGitRemoved", { fg = theme.git_removed, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineGitChanged", { fg = theme.git_changed, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineGitUntracked", { fg = theme.git_untracked or theme.git_changed, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineGitDiff", { fg = theme.git_diff or theme.git_added, bg = "NONE" })
+  vim.api.nvim_set_hl(0, "FancylineGitBranch", { fg = theme.git_branch, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineGitAdded", { fg = theme.git_added, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineGitRemoved", { fg = theme.git_removed, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineGitChanged", { fg = theme.git_changed, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineGitUntracked", { fg = theme.git_untracked or theme.git_changed, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineGitDiff", { fg = theme.git_diff or theme.git_added, bg = "NONE", bold = false })
 
   -- File highlights
-  vim.api.nvim_set_hl(0, "FancylineFile", { fg = theme.file, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineFileModified", { fg = theme.file_modified, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineFileReadonly", { fg = theme.file_readonly, bg = "NONE" })
+  vim.api.nvim_set_hl(0, "FancylineFile", { fg = theme.file, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineFileModified", { fg = theme.file_modified, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineFileReadonly", { fg = theme.file_readonly, bg = "NONE", bold = false })
 
   -- Diagnostics highlights
-  vim.api.nvim_set_hl(0, "FancylineDiagnostics", { fg = theme.diagnostics, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineDiagError", { fg = theme.diagnostics, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineDiagWarn", { fg = theme.diagnostics_warn, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineDiagInfo", { fg = theme.diagnostics_info, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineDiagHint", { fg = theme.diagnostics_hint, bg = "NONE" })
+  vim.api.nvim_set_hl(0, "FancylineDiagnostics", { fg = theme.diagnostics, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineDiagError", { fg = theme.diagnostics, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineDiagWarn", { fg = theme.diagnostics_warn, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineDiagInfo", { fg = theme.diagnostics_info, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineDiagHint", { fg = theme.diagnostics_hint, bg = "NONE", bold = false })
 
   -- Other highlights
-  vim.api.nvim_set_hl(0, "FancylineLsp", { fg = theme.lsp, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineFiletype", { fg = theme.filetype, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineCursor", { fg = theme.cursor, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineSeparator", { fg = theme.separator, bg = "NONE" })
-  vim.api.nvim_set_hl(0, "FancylineBorder", { fg = theme.border, bg = "NONE" })
+  vim.api.nvim_set_hl(0, "FancylineLsp", { fg = theme.lsp, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineFiletype", { fg = theme.filetype, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineCursor", { fg = theme.cursor, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineSeparator", { fg = theme.separator, bg = "NONE", bold = false })
+  vim.api.nvim_set_hl(0, "FancylineBorder", { fg = theme.border, bg = "NONE", bold = false })
 
   -- Apply StatusLine background based on theme setting
   if theme.background == "transparent" then
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE" })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE", bold = false })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE", bold = false })
   elseif theme.background then
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = "NONE" })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = "NONE", bold = false })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = "NONE", bold = false })
   end
 end
 

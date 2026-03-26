@@ -11,7 +11,7 @@ function M.provider(opts, ctx)
     local shiftwidth = vim.opt_local.shiftwidth:get()
     text = "spaces: " .. shiftwidth
   else
-    text = "tabs"
+    text = "tabs: " .. tabstop
   end
 
   return {

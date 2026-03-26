@@ -71,7 +71,7 @@ end
 -- Register diagnostic highlight groups
 function M.setup_highlights()
   for name, colors in pairs(DIAG_STATES) do
-    vim.api.nvim_set_hl(0, colors.hl, { fg = colors.fg, bold = true })
+    vim.api.nvim_set_hl(0, colors.hl, { fg = colors.fg, bold = false })
   end
 end
 

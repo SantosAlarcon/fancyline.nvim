@@ -119,7 +119,7 @@ function M.render(config)
       end
     end
 
-    return table.concat(parts, " ")
+    return table.concat(parts, "  ")
   end
 
   local left_content = render_section(sections.left or {})
