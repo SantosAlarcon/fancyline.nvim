@@ -40,9 +40,9 @@ local mode_highlights = {
   ["^S"] = "FancylineModeSelect",
 }
 
-local function create_highlights()
+local function create_highlights(theme_name, theme_variant)
   local theme = require("fancyline.themes")
-  local current_theme = theme.get(config.theme)
+  local current_theme = theme.get(theme_name, theme_variant)
 
   -- Apply theme base highlights
   theme.apply(current_theme)
@@ -170,10 +170,23 @@ function M.setup(opts)
   config = load_config(opts)
 
   local theme = require("fancyline.themes")
-  local current_theme = theme.get(config.theme)
+  local theme_name = config.theme
+  local theme_variant = nil
+
+  -- Support theme = { name = "github", variant = "dark" }
+  if type(theme_name) == "table" and theme_name.name then
+    theme_name = theme_name.name
+    theme_variant = theme_name.variant
+  end
+
+  local current_theme = theme.get(theme_name, theme_variant)
   theme.apply(current_theme)
 
-  create_highlights()
+  -- Store resolved theme info for later use
+  config._theme_name = theme_name
+  config._theme_variant = theme_variant
+
+  create_highlights(theme_name, theme_variant)
   setup_autocmds()
   setup_refresh_timer()
 

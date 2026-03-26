@@ -39,5 +39,18 @@ return {
     indent = "#4c566a",
     position = "#4c566a",
     background = "#2e3440",
+    primary = "#88c0d0",
+    shades = {
+      shade_1 = "#0e1318",
+      shade_2 = "#141c22",
+      shade_3 = "#1a252c",
+      shade_4 = "#202e36",
+      shade_5 = "#263740",
+      shade_6 = "#2c404a",
+      shade_7 = "#324954",
+      shade_8 = "#38525e",
+      shade_9 = "#3e5b68",
+      shade_10 = "#446472",
+    },
   },
 }

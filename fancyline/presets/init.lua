@@ -6,6 +6,10 @@ local M = {
   ["git-focused"] = require("fancyline.presets.git-focused"),
   vscode = require("fancyline.presets.vscode"),
   slim = require("fancyline.presets.slim"),
+  rounded = require("fancyline.presets.rounded"),
+  angular = require("fancyline.presets.angular"),
+  diagonal = require("fancyline.presets.diagonal"),
+  arrows = require("fancyline.presets.arrows"),
 }
 
 function M.load(preset_name)

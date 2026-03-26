@@ -4,4 +4,5 @@ return {
     center = { "file" },
     right = { "diagnostics", "lsp", "filetype", "cursor" },
   },
+  components = {},
 }

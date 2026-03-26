@@ -2,6 +2,26 @@ local M = {}
 
 local mappings = require("fancyline.themes.colorscheme_mappings")
 
+local function get_colorscheme_background()
+  local statusline_bg = vim.api.nvim_get_hl(0, { name = "StatusLine" }).bg
+  if statusline_bg then
+    if type(statusline_bg) == "number" then
+      return string.format("#%06x", statusline_bg)
+    end
+    return statusline_bg
+  end
+
+  local normal_bg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+  if normal_bg then
+    if type(normal_bg) == "number" then
+      return string.format("#%06x", normal_bg)
+    end
+    return normal_bg
+  end
+
+  return nil
+end
+
 -- Variant detection patterns for each theme
 local variant_patterns = {
   tokyonight = {
@@ -35,12 +55,13 @@ local variant_patterns = {
   },
 }
 
-function M.get(name)
+function M.get(name, forced_variant)
   if name == "auto" then
     name = M.detect()
   end
 
-  local variant = M.detect_variant(name)
+  -- Use forced variant if provided, otherwise detect from colorscheme
+  local variant = forced_variant or M.detect_variant(name)
 
   -- Try to load the theme module
   local ok, theme = pcall(require, "fancyline.themes.themes." .. name)
@@ -59,7 +80,7 @@ function M.get(name)
   end
 
   -- Try common default variants
-  local defaults = { "main", "default", "nord", "night", "mocha", "dracula", "tokyonight" }
+  local defaults = { "main", "default", "nord", "night", "mocha", "dracula", "tokyonight", "dark", "light" }
   for _, v in ipairs(defaults) do
     if theme[v] then
       return theme[v]
@@ -194,12 +215,32 @@ function M.apply(theme)
   vim.api.nvim_set_hl(0, "FancylineBorder", { fg = theme.border, bg = "NONE", bold = false })
 
   -- Apply StatusLine background based on theme setting
-  if theme.background == "transparent" then
+  if theme.background == "auto" then
+    local bg = get_colorscheme_background()
+    if bg then
+      vim.api.nvim_set_hl(0, "StatusLine", { bg = bg, fg = "NONE", bold = false })
+      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = bg, fg = "NONE", bold = false })
+    else
+      vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE", bold = false })
+      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE", bold = false })
+    end
+  elseif theme.background == "transparent" then
     vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE", bold = false })
     vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE", bold = false })
   elseif theme.background then
     vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = "NONE", bold = false })
     vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = "NONE", bold = false })
+  end
+
+  -- Apply shade highlights if defined
+  if theme.shades then
+    for i = 1, 10 do
+      local shade_key = "shade_" .. i
+      local shade_color = theme.shades[shade_key]
+      if shade_color then
+        vim.api.nvim_set_hl(0, "FancylineShade" .. i, { fg = theme.primary or "#ffffff", bg = shade_color })
+      end
+    end
   end
 end
 

@@ -36,6 +36,24 @@ local function resolve_mode_color(color_spec, state)
   return current_theme.modes[mode_key] or "#ABB2BF"
 end
 
+local function resolve_shade_color(color_spec)
+  if type(color_spec) ~= "string" then
+    return color_spec
+  end
+
+  local shade_match = color_spec:match("^shade_(%d+)$")
+  if shade_match then
+    local theme = require("fancyline.themes")
+    local current_theme = theme.get("auto")
+    local shade_key = "shade_" .. shade_match
+    if current_theme.shades and current_theme.shades[shade_key] then
+      return current_theme.shades[shade_key]
+    end
+  end
+
+  return color_spec
+end
+
 local function get_hl_name(name, fg, bg)
   -- If no custom fg/bg, use the original highlight name directly
   if not fg and not bg then
@@ -263,11 +281,11 @@ function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, s
   local left_style = M.get_style(left_style_name)
   local right_style = M.get_style(right_style_name)
 
-  -- Border colors with defaults from theme and resolve "mode"
+  -- Border colors with defaults from theme and resolve "mode" and "shade_X"
   local left_fg = resolve_mode_color(border_cfg.left and border_cfg.left.fg, state) or default_border
-  local left_bg = resolve_mode_color(border_cfg.left and border_cfg.left.bg, state) or "NONE"
+  local left_bg = resolve_shade_color(resolve_mode_color(border_cfg.left and border_cfg.left.bg, state)) or "NONE"
   local right_fg = resolve_mode_color(border_cfg.right and border_cfg.right.fg, state) or default_border
-  local right_bg = resolve_mode_color(border_cfg.right and border_cfg.right.bg, state) or "NONE"
+  local right_bg = resolve_shade_color(resolve_mode_color(border_cfg.right and border_cfg.right.bg, state)) or "NONE"
 
   -- Content gap between icon and text
   local content_gap = border_cfg.content_gap or " "
