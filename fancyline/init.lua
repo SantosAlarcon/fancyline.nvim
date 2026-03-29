@@ -140,7 +140,14 @@ local function setup_autocmds()
     group = augroup,
     callback = function()
       local theme = require("fancyline.themes")
-      theme.apply(theme.get(config.theme))
+      -- Handle config.theme as table { name, variant } or string
+      local theme_name = config.theme
+      local forced_variant = nil
+      if type(theme_name) == "table" and theme_name.name then
+        forced_variant = theme_name.variant
+        theme_name = theme_name.name
+      end
+      theme.apply(theme.get(theme_name, forced_variant))
       if enabled and render_fn then
         render_fn()
       end
@@ -175,8 +182,8 @@ function M.setup(opts)
 
   -- Support theme = { name = "github", variant = "dark" }
   if type(theme_name) == "table" and theme_name.name then
+    theme_variant = theme_name.variant  -- Get variant BEFORE reassigning name
     theme_name = theme_name.name
-    theme_variant = theme_name.variant
   end
 
   local current_theme = theme.get(theme_name, theme_variant)
