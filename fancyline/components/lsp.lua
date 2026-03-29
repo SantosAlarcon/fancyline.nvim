@@ -1,8 +1,11 @@
 local M = {}
 
-local lsp_utils = require("fancyline.utils.lsp")
-
 function M.provider(opts, ctx)
+  local lsp_utils_ok, lsp_utils = pcall(require, "fancyline.utils.lsp")
+  if not lsp_utils_ok then
+    return nil
+  end
+
   local servers = lsp_utils.get_active(ctx.bufnr)
 
   if #servers == 0 then

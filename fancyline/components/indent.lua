@@ -1,24 +1,34 @@
 local M = {}
 
 function M.provider(opts, ctx)
-  local expandtab = vim.opt_local.expandtab:get()
-  local tabstop = vim.opt_local.tabstop:get()
+	local expandtab = vim.opt_local.expandtab:get()
+	local tabstop = vim.opt_local.tabstop:get()
 
-  local icon = opts.icon or "󰌒"
-  local text
+	local icon = opts.icon or "󰌒"
+	local text
 
-  if expandtab then
-    local shiftwidth = vim.opt_local.shiftwidth:get()
-    text = "spaces: " .. shiftwidth
-  else
-    text = "tabs: " .. tabstop
-  end
+	local spaces_text, tabs_text = opts.spaces_text, opts.tabs_text
 
-  return {
-    text = icon .. " " .. text,
-    highlight = "FancylineIndent",
-    style = opts.style or "none",
-  }
+	if expandtab then
+		local shiftwidth = vim.opt_local.shiftwidth:get()
+		if spaces_text then
+			text = spaces_text .. ": " .. shiftwidth
+		else
+			text = "Spaces: " .. shiftwidth
+		end
+	else
+		if tabs_text then
+			text = tabs_text .. ": " .. tabstop
+		else
+			text = "Tabs: " .. tabstop
+		end
+	end
+
+	return {
+		text = icon .. " " .. text,
+		highlight = "FancylineIndent",
+		style = opts.style or "none",
+	}
 end
 
 return M

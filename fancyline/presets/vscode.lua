@@ -3,7 +3,7 @@ return {
   sections = {
     left = { "file", "git_branch", "git_diff", "errors", "warnings", "infos", "hints" },
     center = {},
-    right = { "lsp", "encoding", "indent", "position", "filetype" },
+    right = { "lsp", "encoding", "fileformat", "indent", "position", "filetype" },
   },
   components = {
     mode = {

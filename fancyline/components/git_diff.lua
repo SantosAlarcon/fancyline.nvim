@@ -1,8 +1,11 @@
 local M = {}
 
-local git_utils = require("fancyline.utils.git")
-
 function M.provider(opts, ctx)
+  local git_utils_ok, git_utils = pcall(require, "fancyline.utils.git")
+  if not git_utils_ok then
+    return nil
+  end
+
   local counts = git_utils.get_diff_counts()
   if not counts then
     return nil

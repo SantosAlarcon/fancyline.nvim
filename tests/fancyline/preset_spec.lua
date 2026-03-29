@@ -1,0 +1,148 @@
+local lua_path = vim.api.nvim_get_runtime_file("lua/fancyline/init.lua", false)[1]
+if lua_path then
+  vim.opt.runtimepath:prepend(vim.fn.fnamemodify(lua_path, ":h:h"))
+end
+
+local presets = require("fancyline.presets")
+local helpers = require("tests.helpers.setup")
+
+describe("fancyline.presets", function()
+  before_each(function()
+    helpers.cleanup()
+  end)
+
+  after_each(function()
+    helpers.cleanup()
+  end)
+
+  describe("preset loading", function()
+    it("loads default preset", function()
+      local preset = presets.load("default")
+      assert.is_not_nil(preset)
+      assert.is_table(preset)
+      assert.is_table(preset.sections)
+      assert.is_table(preset.components)
+    end)
+
+    it("loads minimal preset", function()
+      local preset = presets.load("minimal")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+    end)
+
+    it("loads standard preset", function()
+      local preset = presets.load("standard")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+    end)
+
+    it("loads full preset", function()
+      local preset = presets.load("full")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+    end)
+
+    it("loads git-focused preset", function()
+      local preset = presets.load("git-focused")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+    end)
+
+    it("loads vscode preset", function()
+      local preset = presets.load("vscode")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+      assert.is_table(preset.sections.left)
+      assert.is_table(preset.sections.right)
+    end)
+
+    it("loads slim preset", function()
+      local preset = presets.load("slim")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+    end)
+
+    it("returns empty table for unknown preset", function()
+      local preset = presets.load("unknown-preset")
+      assert.is_table(preset)
+      assert.is_nil(next(preset))
+    end)
+  end)
+
+  describe("vscode preset structure", function()
+    it("has correct sections.left", function()
+      local preset = presets.load("vscode")
+      assert.is_table(preset.sections.left)
+      local left = preset.sections.left
+      assert.is_true(vim.tbl_contains(left, "file"))
+      assert.is_true(vim.tbl_contains(left, "git_branch"))
+      assert.is_true(vim.tbl_contains(left, "git_diff"))
+      assert.is_true(vim.tbl_contains(left, "errors"))
+      assert.is_true(vim.tbl_contains(left, "warnings"))
+      assert.is_true(vim.tbl_contains(left, "infos"))
+      assert.is_true(vim.tbl_contains(left, "hints"))
+    end)
+
+    it("has correct sections.right", function()
+      local preset = presets.load("vscode")
+      assert.is_table(preset.sections.right)
+      local right = preset.sections.right
+      assert.is_true(vim.tbl_contains(right, "lsp"))
+      assert.is_true(vim.tbl_contains(right, "encoding"))
+      assert.is_true(vim.tbl_contains(right, "indent"))
+      assert.is_true(vim.tbl_contains(right, "position"))
+      assert.is_true(vim.tbl_contains(right, "filetype"))
+    end)
+
+    it("has vscode icons configured", function()
+      local preset = presets.load("vscode")
+      assert.equals("󰈚", preset.components.file.icon)
+      assert.equals("󰊢", preset.components.git_branch.icon)
+      assert.equals("", preset.components.errors.icon)
+      assert.equals("", preset.components.warnings.icon)
+      assert.equals("", preset.components.infos.icon)
+      assert.equals("", preset.components.hints.icon)
+      assert.equals("", preset.components.encoding.icon)
+      assert.equals("󰌒", preset.components.indent.icon)
+      assert.equals("󰀹", preset.components.position.icon)
+    end)
+
+    it("has correct style configurations", function()
+      local preset = presets.load("vscode")
+      assert.equals("none", preset.components.mode.style)
+      assert.equals("none", preset.components.file.style)
+      assert.equals("none", preset.components.lsp.style)
+      assert.equals("none", preset.components.position.style)
+      assert.equals("none", preset.components.filetype.style)
+    end)
+
+    it("has filetype with icon = nil for auto-detection", function()
+      local preset = presets.load("vscode")
+      assert.is_nil(preset.components.filetype.icon)
+      assert.is_true(preset.components.filetype.show_icon)
+    end)
+
+    it("has position with vscode format", function()
+      local preset = presets.load("vscode")
+      assert.equals("Ln %l, Col %c", preset.components.position.format)
+    end)
+  end)
+
+  describe("all presets have required structure", function()
+    local preset_names = { "minimal", "default", "standard", "full", "git-focused", "vscode", "slim" }
+
+    for _, name in ipairs(preset_names) do
+      it(name .. " has sections", function()
+        local preset = presets.load(name)
+        assert.is_table(preset.sections)
+        assert.is_table(preset.sections.left)
+        assert.is_table(preset.sections.right)
+      end)
+
+      it(name .. " has components", function()
+        local preset = presets.load(name)
+        assert.is_table(preset.components)
+      end)
+    end
+  end)
+end)

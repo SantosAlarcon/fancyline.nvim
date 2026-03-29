@@ -1,7 +1,5 @@
 local M = {}
 
-local diag_utils = require("fancyline.utils.diagnostics")
-
 -- Define diagnostic states with their colors
 local DIAG_STATES = {
   error = { hl = "FancylineDiagError", fg = "#f44336" },
@@ -11,6 +9,11 @@ local DIAG_STATES = {
 }
 
 function M.provider(opts, ctx)
+  local diag_utils_ok, diag_utils = pcall(require, "fancyline.utils.diagnostics")
+  if not diag_utils_ok then
+    return nil
+  end
+
   local counts = diag_utils.get_counts(ctx.bufnr)
 
   local has_errors = counts.error > 0

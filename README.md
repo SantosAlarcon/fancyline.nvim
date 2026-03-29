@@ -8,7 +8,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 > [!TIP]
 > Works out of the box with sensible defaults. Customize every component when you need it.
 
-## Taable of contents
+## Table of contents
 
 - [Features](#features)
 - [Requirements](#requirements)
@@ -28,7 +28,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 
 ## Features
 
-- **16 Components** - Mode, git info, file, diagnostics, LSP, position, and more
+- **33 Components** - Mode, git info, file, diagnostics, LSP, position, and more
 - **20 Built-in Themes** - Auto-detects your colorscheme (tokyonight, catppuccin, dracula, nord, github, and more)
 - **11 Presets** - From minimal to full-featured, with styled border variants
 - **Custom Borders** - Fully customizable with separate styles and colors for each side
@@ -177,7 +177,10 @@ Colors can reference theme values:
 | `mode` | Vim mode indicator |
 | `file` | Current file name |
 | `git_branch` | Git branch name |
+| `git_signs` | Git hunks and untracked files |
 | `git_diff` | Git diff summary (+added, ~changed, ?untracked) |
+| `branch_status` | Branch status (ahead/behind) |
+| `commit_msg` | Current commit message |
 | `errors` | LSP errors count |
 | `warnings` | LSP warnings count |
 | `infos` | LSP info count |
@@ -185,11 +188,25 @@ Colors can reference theme values:
 | `diagnostics` | Combined diagnostics |
 | `lsp` | Active LSP servers |
 | `lsp_progress` | LSP progress messages |
+| `lsp_clients` | LSP clients with versions |
+| `dap` | DAP debugger status |
+| `treesitter` | Treesitter language |
 | `encoding` | File encoding |
+| `fileformat` | File format (LF/CRLF) |
+| `filesize` | File size |
 | `indent` | Indentation settings |
 | `position` | Cursor position |
+| `bufnr` | Buffer number |
+| `tabnr` | Tab number |
+| `cwd` | Current working directory |
+| `project` | Project name |
+| `quickfix` | Quickfix list count |
 | `filetype` | File type with icon |
-| `cursor` | Line and column |
+| `checktime` | File check time/reload status |
+| `macro_recording` | Macro recording indicator |
+| `search_stats` | Search statistics |
+| `spell` | Spell check indicator |
+| `reload` | File reload indicator |
 
 ## API
 
@@ -222,7 +239,7 @@ lua/fancyline/
 │   ├── angular.lua     -- With square borders
 │   ├── diagonal.lua    -- With slanted borders
 │   └── arrows.lua      -- With arrow borders
-├── components/         -- 16 components
+├── components/         -- 33 components
 ├── extensions/         -- Telescope & Oil support
 ├── renderer/
 │   ├── init.lua        -- Component renderer

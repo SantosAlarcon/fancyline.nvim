@@ -56,7 +56,7 @@ local variant_patterns = {
 }
 
 function M.get(name, forced_variant)
-  if name == "auto" then
+  if not name or name == "auto" then
     name = M.detect()
   end
 

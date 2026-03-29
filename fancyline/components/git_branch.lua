@@ -1,8 +1,11 @@
 local M = {}
 
-local git_utils = require("fancyline.utils.git")
-
 function M.provider(opts, ctx)
+  local git_utils_ok, git_utils = pcall(require, "fancyline.utils.git")
+  if not git_utils_ok then
+    return nil
+  end
+
   local branch = git_utils.get_branch()
   if not branch or branch == "" then
     return nil

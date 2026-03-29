@@ -1,7 +1,5 @@
 local M = {}
 
-local devicons = require("fancyline.utils.devicons")
-
 function M.provider(opts, ctx)
 	local bufnr = ctx.bufnr
 	local filename = vim.api.nvim_buf_get_name(bufnr)
@@ -11,10 +9,17 @@ function M.provider(opts, ctx)
 	local readonly = vim.bo[bufnr].readonly
 
 	local state = "normal"
+	local state_icon = ""
+	local state_highlight = "FancylineFile"
+
 	if modified then
 		state = "modified"
+		state_icon = opts.icons and opts.icons.modified or "●"
+		state_highlight = "FancylineFileModified"
 	elseif readonly then
 		state = "readonly"
+		state_icon = opts.icons and opts.icons.readonly or "󰌾"
+		state_highlight = "FancylineFileReadonly"
 	end
 
 	-- Build display name
@@ -25,6 +30,11 @@ function M.provider(opts, ctx)
 	else
 		-- Use filename only (no path) - :t = tail
 		display_name = vim.fn.fnamemodify(filename, ":t")
+	end
+
+	-- Append state indicator to filename
+	if state_icon ~= "" then
+		display_name = display_name .. " " .. state_icon
 	end
 
 	-- Build icon config with devicon
@@ -43,7 +53,8 @@ function M.provider(opts, ctx)
 
 		if opts.use_devicon ~= false then
 			-- Get icon for filetype using get_filetype_icon
-			local devicon = devicons.get_filetype_icon(bufnr)
+			local devicons_ok, devicons = pcall(require, "fancyline.utils.devicons")
+			local devicon = devicons_ok and devicons.get_filetype_icon(bufnr) or nil
 			if devicon then
 				icon_symbol = devicon
 			end
@@ -60,12 +71,18 @@ function M.provider(opts, ctx)
 		text = display_name,
 		icon = icon_cfg,
 		style = opts.style or "square",
-		highlight = "FancylineFile",
+		highlight = state_highlight,
 		state = state,
 		fg = opts.fg,
 		bg = opts.bg,
 		border = opts.border,
 	}
+end
+
+function M.setup_highlights()
+	vim.api.nvim_set_hl(0, "FancylineFile", { fg = "#abb2bf", bold = false })
+	vim.api.nvim_set_hl(0, "FancylineFileModified", { fg = "#e5c07b", bold = true })
+	vim.api.nvim_set_hl(0, "FancylineFileReadonly", { fg = "#e06c75", bold = false })
 end
 
 return M

@@ -1,5 +1,55 @@
 local M = {}
 
+function M.get_root()
+  local cwd = vim.fn.getcwd()
+  if not cwd or cwd == "" then
+    return nil
+  end
+
+  local handle = io.popen("cd " .. cwd .. " && git rev-parse --show-toplevel 2>/dev/null")
+  if handle then
+    local root = handle:read("*a"):gsub("%s+", ""):gsub("\n", "")
+    handle:close()
+    if root and root ~= "" then
+      return root
+    end
+  end
+
+  return nil
+end
+
+function M.get_ahead_behind()
+  local cwd = vim.fn.getcwd()
+  if not cwd or cwd == "" then
+    return nil, nil
+  end
+
+  local ahead = 0
+  local behind = 0
+
+  local rev_list = io.popen("cd " .. cwd .. " && git rev-list --left-right --count HEAD...@{upstream} 2>/dev/null")
+  if rev_list then
+    local output = rev_list:read("*a"):gsub("%s+", ""):gsub("\n", "")
+    rev_list:close()
+    if output and output:match("^%d+%d+$") then
+      local ahead_behind = {}
+      for num in output:gmatch("%d+") do
+        table.insert(ahead_behind, tonumber(num))
+      end
+      if #ahead_behind >= 2 then
+        ahead = ahead_behind[1]
+        behind = ahead_behind[2]
+      end
+    end
+  end
+
+  if ahead == 0 and behind == 0 then
+    return nil, nil
+  end
+
+  return ahead, behind
+end
+
 function M.get_branch()
   -- Try git command first (always works if in a git repo)
   local cwd = vim.fn.getcwd()

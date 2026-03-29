@@ -1,10 +1,13 @@
 local M = {}
 
-local diag_utils = require("fancyline.utils.diagnostics")
-
 local DIAG_STATE = { hl = "FancylineDiagHint", fg = "#61afef" }
 
 function M.provider(opts, ctx)
+  local diag_utils_ok, diag_utils = pcall(require, "fancyline.utils.diagnostics")
+  if not diag_utils_ok then
+    return nil
+  end
+
   local counts = diag_utils.get_counts(ctx.bufnr)
 
   if counts.hint == 0 then

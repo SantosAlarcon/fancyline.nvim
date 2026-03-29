@@ -22,13 +22,16 @@ describe("fancyline.components.file", function()
         if buf == 1 then return "/path/to/file.lua" end
         return ""
       end
-      vim.bo[1].modified = false
-      vim.bo[1].readonly = false
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", false)
 
       local opts = {}
       local result = file.provider(opts, ctx)
 
-      assert.equals(" file.lua", result.text)
+      assert.is_not_nil(result)
+      assert.equals("file.lua", result.text)
+      assert.equals("FancylineFile", result.highlight)
+      assert.equals("normal", result.state)
     end)
 
     it("returns empty_name for unnamed buffers", function()
@@ -40,7 +43,8 @@ describe("fancyline.components.file", function()
       local opts = { empty_name = "[No Name]" }
       local result = file.provider(opts, ctx)
 
-      assert.equals(" [No Name]", result.text)
+      assert.is_not_nil(result)
+      assert.equals("[No Name]", result.text)
     end)
 
     it("returns state as normal for unmodified file", function()
@@ -48,41 +52,97 @@ describe("fancyline.components.file", function()
       vim.api.nvim_buf_get_name = function(buf)
         return "/path/to/file.lua"
       end
-      vim.bo[1].modified = false
-      vim.bo[1].readonly = false
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", false)
 
       local opts = {}
       local result = file.provider(opts, ctx)
 
       assert.equals("normal", result.state)
+      assert.equals("FancylineFile", result.highlight)
     end)
+  end)
 
-    it("returns state as modified when buffer is modified", function()
+  describe("modified state", function()
+    it("returns modified icon and highlight when buffer is modified", function()
       local ctx = { bufnr = 1, winid = 1 }
       vim.api.nvim_buf_get_name = function(buf)
         return "/path/to/file.lua"
       end
-      vim.bo[1].modified = true
-      vim.bo[1].readonly = false
+      helpers.mock_buf_option(1, "modified", true)
+      helpers.mock_buf_option(1, "readonly", false)
 
       local opts = {}
       local result = file.provider(opts, ctx)
 
       assert.equals("modified", result.state)
+      assert.equals("FancylineFileModified", result.highlight)
+      assert.is_true(result.text:match("●") ~= nil)
     end)
 
-    it("returns state as readonly for readonly buffers", function()
+    it("uses custom modified icon from opts.icons", function()
       local ctx = { bufnr = 1, winid = 1 }
       vim.api.nvim_buf_get_name = function(buf)
         return "/path/to/file.lua"
       end
-      vim.bo[1].modified = false
-      vim.bo[1].readonly = true
+      helpers.mock_buf_option(1, "modified", true)
+      helpers.mock_buf_option(1, "readonly", false)
+
+      local opts = {
+        icons = { modified = "M" }
+      }
+      local result = file.provider(opts, ctx)
+
+      assert.is_true(result.text:match("M") ~= nil)
+    end)
+
+    it("modified takes precedence over readonly", function()
+      local ctx = { bufnr = 1, winid = 1 }
+      vim.api.nvim_buf_get_name = function(buf)
+        return "/path/to/file.lua"
+      end
+      helpers.mock_buf_option(1, "modified", true)
+      helpers.mock_buf_option(1, "readonly", true)
+
+      local opts = {}
+      local result = file.provider(opts, ctx)
+
+      assert.equals("modified", result.state)
+      assert.equals("FancylineFileModified", result.highlight)
+    end)
+  end)
+
+  describe("readonly state", function()
+    it("returns readonly icon and highlight when buffer is readonly", function()
+      local ctx = { bufnr = 1, winid = 1 }
+      vim.api.nvim_buf_get_name = function(buf)
+        return "/path/to/file.lua"
+      end
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", true)
 
       local opts = {}
       local result = file.provider(opts, ctx)
 
       assert.equals("readonly", result.state)
+      assert.equals("FancylineFileReadonly", result.highlight)
+      assert.is_true(result.text:match("󰌾") ~= nil)
+    end)
+
+    it("uses custom readonly icon from opts.icons", function()
+      local ctx = { bufnr = 1, winid = 1 }
+      vim.api.nvim_buf_get_name = function(buf)
+        return "/path/to/file.lua"
+      end
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", true)
+
+      local opts = {
+        icons = { readonly = "R" }
+      }
+      local result = file.provider(opts, ctx)
+
+      assert.is_true(result.text:match("R") ~= nil)
     end)
   end)
 
@@ -92,8 +152,8 @@ describe("fancyline.components.file", function()
       vim.api.nvim_buf_get_name = function(buf)
         return "/path/to/file.lua"
       end
-      vim.bo[1].modified = false
-      vim.bo[1].readonly = false
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", false)
 
       local opts = {
         icon = { symbol = "X", fg = "#ff0000", bg = "#0000ff" }
@@ -110,8 +170,8 @@ describe("fancyline.components.file", function()
       vim.api.nvim_buf_get_name = function(buf)
         return "/path/to/file.lua"
       end
-      vim.bo[1].modified = false
-      vim.bo[1].readonly = false
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", false)
 
       local opts = {
         icon = { symbol = "Y" },
@@ -129,8 +189,8 @@ describe("fancyline.components.file", function()
       vim.api.nvim_buf_get_name = function(buf)
         return "/path/to/file.lua"
       end
-      vim.bo[1].modified = false
-      vim.bo[1].readonly = false
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", false)
 
       local opts = {
         icon = { symbol = "X" },
@@ -143,7 +203,7 @@ describe("fancyline.components.file", function()
       }
       local result = file.provider(opts, ctx)
 
-      assert.equals(" file.lua", result.text)
+      assert.is_true(result.text:match("file.lua") ~= nil)
       assert.equals("X", result.icon.symbol)
       assert.equals("round", result.style)
       assert.equals("FancylineFile", result.highlight)
@@ -151,6 +211,78 @@ describe("fancyline.components.file", function()
       assert.equals("#fff", result.fg)
       assert.equals("#000", result.bg)
       assert.is_table(result.border)
+    end)
+  end)
+
+  describe("setup_highlights", function()
+    it("sets up file highlight groups", function()
+      local called = false
+      vim.api.nvim_set_hl = function(namespace, name, highlights)
+        if name == "FancylineFile" then
+          called = true
+          assert.equals("#abb2bf", highlights.fg)
+          assert.equals(false, highlights.bold)
+        end
+      end
+
+      file.setup_highlights()
+      assert.is_true(called)
+    end)
+
+    it("sets up modified highlight with bold", function()
+      local called = false
+      vim.api.nvim_set_hl = function(namespace, name, highlights)
+        if name == "FancylineFileModified" then
+          called = true
+          assert.equals("#e5c07b", highlights.fg)
+          assert.equals(true, highlights.bold)
+        end
+      end
+
+      file.setup_highlights()
+      assert.is_true(called)
+    end)
+
+    it("sets up readonly highlight without bold", function()
+      local called = false
+      vim.api.nvim_set_hl = function(namespace, name, highlights)
+        if name == "FancylineFileReadonly" then
+          called = true
+          assert.equals("#e06c75", highlights.fg)
+          assert.equals(false, highlights.bold)
+        end
+      end
+
+      file.setup_highlights()
+      assert.is_true(called)
+    end)
+  end)
+
+  describe("devicons failure handling", function()
+    it("returns result when devicons fails", function()
+      package.loaded["fancyline.utils.devicons"] = nil
+      local failed = false
+      package.loaders[2] = function(name)
+        if name:match("devicons") then
+          failed = true
+          return function() error("module not found") end
+        end
+      end
+
+      local ctx = { bufnr = 1, winid = 1 }
+      vim.api.nvim_buf_get_name = function(buf)
+        return "/path/to/file.lua"
+      end
+      helpers.mock_buf_option(1, "modified", false)
+      helpers.mock_buf_option(1, "readonly", false)
+
+      local opts = {}
+      local result = file.provider(opts, ctx)
+
+      assert.is_not_nil(result)
+      assert.equals("file.lua", result.text)
+
+      package.loaders[2] = nil
     end)
   end)
 end)
