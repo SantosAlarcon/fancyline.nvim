@@ -2,6 +2,14 @@ local M = {}
 
 local mappings = require("fancyline.themes.colorscheme_mappings")
 
+-- Module-level theme cache for performance optimization
+---@type { theme: string|nil, variant: string|nil, data: FancylineThemeDefinition|nil }
+local _theme_cache = {
+  theme = nil,
+  variant = nil,
+  data = nil,
+}
+
 ---@class FancylineThemeDefinition
 ---@field name? string Theme name
 ---@field variant? string Theme variant
@@ -96,6 +104,11 @@ local variant_patterns = {
 ---@param forced_variant? string Force a specific variant
 ---@return FancylineThemeDefinition
 function M.get(name, forced_variant)
+  -- Check cache first for performance
+  if _theme_cache.data and _theme_cache.theme == name and _theme_cache.variant == forced_variant then
+    return _theme_cache.data
+  end
+
   if not name or name == "auto" then
     name = M.detect()
   end
@@ -105,34 +118,50 @@ function M.get(name, forced_variant)
 
   -- Try to load the theme module
   local ok, theme = pcall(require, "fancyline.themes.themes." .. name)
+  local result
   if not ok then
     -- Fallback to tokyonight if theme not found
     ok, theme = pcall(require, "fancyline.themes.themes.tokyonight")
     if not ok then
-      return M.get_default()
+      result = M.get_default()
+    else
+      result = theme[variant] or theme.night or M.get_default()
     end
-    return theme[variant] or theme.night or M.get_default()
-  end
-
-  -- Get the variant or the default/first variant
-  if variant and theme[variant] then
-    return theme[variant]
-  end
-
-  -- Try common default variants
-  local defaults = { "main", "default", "nord", "night", "mocha", "dracula", "tokyonight", "dark", "light" }
-  for _, v in ipairs(defaults) do
-    if theme[v] then
-      return theme[v]
+  else
+    -- Get the variant or the default/first variant
+    if variant and theme[variant] then
+      result = theme[variant]
+    else
+      -- Try common default variants
+      local defaults = { "main", "default", "nord", "night", "mocha", "dracula", "tokyonight", "dark", "light" }
+      for _, v in ipairs(defaults) do
+        if theme[v] then
+          result = theme[v]
+          break
+        end
+      end
+      -- Return first available variant if no default found
+      if not result then
+        for _, v in pairs(theme) do
+          result = v
+          break
+        end
+      end
     end
   end
 
-  -- Return first available variant
-  for _, v in pairs(theme) do
-    return v
+  if not result then
+    result = M.get_default()
   end
 
-  return M.get_default()
+  -- Cache the result for performance
+  _theme_cache = {
+    theme = name,
+    variant = forced_variant,
+    data = result,
+  }
+
+  return result
 end
 
 ---Detect the theme from the current colorscheme
@@ -221,6 +250,18 @@ function M.get_default()
   }
 end
 
+---Invalidate the theme cache (call after colorscheme change)
+function M.invalidate_cache()
+  _theme_cache.data = nil
+end
+
+-- Cache invalidation on colorscheme change
+vim.api.nvim_create_autocmd("Colorscheme", {
+  callback = function()
+    _theme_cache.data = nil
+  end,
+})
+
 ---Apply a theme's colors to Neovim highlight groups
 ---@param theme? FancylineThemeDefinition
 function M.apply(theme)
@@ -228,67 +269,98 @@ function M.apply(theme)
     theme = M.get("tokyonight")
   end
 
-  -- Mode highlights
-  vim.api.nvim_set_hl(0, "FancylineModeNormal", { fg = theme.modes.n, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineModeInsert", { fg = theme.modes.i, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineModeVisual", { fg = theme.modes.v, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineModeSelect", { fg = theme.modes.s, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineModeTerminal", { fg = theme.modes.t, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineModeCommand", { fg = theme.modes.c, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineModeReplace", { fg = theme.modes.r, bg = "NONE", bold = false })
-
-  -- Git highlights
-  vim.api.nvim_set_hl(0, "FancylineGitBranch", { fg = theme.git_branch, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineGitAdded", { fg = theme.git_added, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineGitRemoved", { fg = theme.git_removed, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineGitChanged", { fg = theme.git_changed, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineGitUntracked", { fg = theme.git_untracked or theme.git_changed, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineGitDiff", { fg = theme.git_diff or theme.git_added, bg = "NONE", bold = false })
-
-  -- File highlights
-  vim.api.nvim_set_hl(0, "FancylineFile", { fg = theme.file, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineFileModified", { fg = theme.file_modified, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineFileReadonly", { fg = theme.file_readonly, bg = "NONE", bold = false })
-
-  -- Diagnostics highlights
-  vim.api.nvim_set_hl(0, "FancylineDiagnostics", { fg = theme.diagnostics, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineDiagError", { fg = theme.diagnostics, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineDiagWarn", { fg = theme.diagnostics_warn, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineDiagInfo", { fg = theme.diagnostics_info, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineDiagHint", { fg = theme.diagnostics_hint, bg = "NONE", bold = false })
-
-  -- Other highlights
-  vim.api.nvim_set_hl(0, "FancylineLsp", { fg = theme.lsp, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineFiletype", { fg = theme.filetype, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineCursor", { fg = theme.cursor, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineSeparator", { fg = theme.separator, bg = "NONE", bold = false })
-  vim.api.nvim_set_hl(0, "FancylineBorder", { fg = theme.border, bg = "NONE", bold = false })
-
-  -- Apply StatusLine background based on theme setting
-  if theme.background == "auto" then
-    local bg = get_colorscheme_background()
-    if bg then
-      vim.api.nvim_set_hl(0, "StatusLine", { bg = bg, fg = theme.foreground or "NONE", bold = false })
-      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = bg, fg = theme.foreground or "NONE", bold = false })
-    else
-      vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
-      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
-    end
-  elseif theme.background == "transparent" then
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
-  elseif theme.background then
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = theme.foreground or "NONE", bold = false })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = theme.foreground or "NONE", bold = false })
+  -- Helper to batch set highlights
+  local function set_hl(group, opts)
+    vim.api.nvim_set_hl(0, group, opts)
   end
 
-  -- Apply shade highlights if defined
+  -- Mode highlights (batched)
+  local mode_mappings = {
+    { "FancylineModeNormal", theme.modes.n },
+    { "FancylineModeInsert", theme.modes.i },
+    { "FancylineModeVisual", theme.modes.v },
+    { "FancylineModeSelect", theme.modes.s },
+    { "FancylineModeTerminal", theme.modes.t },
+    { "FancylineModeCommand", theme.modes.c },
+    { "FancylineModeReplace", theme.modes.r },
+  }
+  for _, m in ipairs(mode_mappings) do
+    set_hl(m[1], { fg = m[2], bg = "NONE", bold = false })
+  end
+
+  -- Git highlights (batched)
+  local git_mappings = {
+    { "FancylineGitBranch", theme.git_branch },
+    { "FancylineGitAdded", theme.git_added },
+    { "FancylineGitRemoved", theme.git_removed },
+    { "FancylineGitChanged", theme.git_changed },
+    { "FancylineGitUntracked", theme.git_untracked or theme.git_changed },
+    { "FancylineGitDiff", theme.git_diff or theme.git_added },
+  }
+  for _, g in ipairs(git_mappings) do
+    set_hl(g[1], { fg = g[2], bg = "NONE", bold = false })
+  end
+
+  -- File highlights (batched)
+  local file_mappings = {
+    { "FancylineFile", theme.file },
+    { "FancylineFileModified", theme.file_modified },
+    { "FancylineFileReadonly", theme.file_readonly },
+  }
+  for _, f in ipairs(file_mappings) do
+    set_hl(f[1], { fg = f[2], bg = "NONE", bold = false })
+  end
+
+  -- Diagnostics highlights (batched)
+  local diag_mappings = {
+    { "FancylineDiagnostics", theme.diagnostics },
+    { "FancylineDiagError", theme.diagnostics },
+    { "FancylineDiagWarn", theme.diagnostics_warn },
+    { "FancylineDiagInfo", theme.diagnostics_info },
+    { "FancylineDiagHint", theme.diagnostics_hint },
+  }
+  for _, d in ipairs(diag_mappings) do
+    set_hl(d[1], { fg = d[2], bg = "NONE", bold = false })
+  end
+
+  -- Other highlights (batched)
+  local other_mappings = {
+    { "FancylineLsp", theme.lsp },
+    { "FancylineFiletype", theme.filetype },
+    { "FancylineCursor", theme.cursor },
+    { "FancylineSeparator", theme.separator },
+    { "FancylineBorder", theme.border },
+  }
+  for _, o in ipairs(other_mappings) do
+    set_hl(o[1], { fg = o[2], bg = "NONE", bold = false })
+  end
+
+  -- Apply StatusLine background based on theme setting
+  local statusline_opts = { bold = false }
+  if theme.background == "auto" then
+    local bg = get_colorscheme_background()
+    statusline_opts.bg = bg or "NONE"
+    statusline_opts.fg = theme.foreground or "NONE"
+  elseif theme.background == "transparent" then
+    statusline_opts.bg = "NONE"
+    statusline_opts.fg = theme.foreground or "NONE"
+  elseif theme.background then
+    statusline_opts.bg = theme.background
+    statusline_opts.fg = theme.foreground or "NONE"
+  else
+    statusline_opts.bg = "NONE"
+    statusline_opts.fg = "NONE"
+  end
+  vim.api.nvim_set_hl(0, "StatusLine", statusline_opts)
+  vim.api.nvim_set_hl(0, "StatusLineNC", statusline_opts)
+
+  -- Apply shade highlights if defined (batched)
   if theme.shades then
     for i = 1, 10 do
       local shade_key = "shade_" .. i
       local shade_color = theme.shades[shade_key]
       if shade_color then
-        vim.api.nvim_set_hl(0, "FancylineShade" .. i, { fg = theme.primary or "#ffffff", bg = shade_color })
+        set_hl("FancylineShade" .. i, { fg = theme.primary or "#ffffff", bg = shade_color })
       end
     end
   end

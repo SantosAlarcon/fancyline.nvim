@@ -1,11 +1,14 @@
 local M = {}
 
+-- Hoist require to module level for performance
+local git_utils_ok, git_utils = pcall(require, "fancyline.utils.git")
+
 ---Provider function for the git_branch component.
 ---@param opts? FancylineGitBranchComponent
 ---@param ctx FancylineContext
 ---@return FancylineComponentResult?
 function M.provider(opts, ctx)
-  local git_utils_ok, git_utils = pcall(require, "fancyline.utils.git")
+  -- Use module-level git_utils (hoisted for performance)
   if not git_utils_ok then
     return nil
   end

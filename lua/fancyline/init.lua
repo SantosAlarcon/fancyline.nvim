@@ -7,6 +7,30 @@ local config = nil
 local enabled = false
 local timer = nil
 
+-- Debounce timers for CursorMoved/CursorMovedI
+local _debounce_timers = {
+  cursor_moved = nil,
+  cursor_moved_i = nil,
+}
+
+-- Debounce helper using vim.defer_fn for performance
+---@param fn function The function to debounce
+---@param timer_key string Key to store timer reference
+---@param delay number Delay in milliseconds
+local function debounced_refresh(fn, timer_key, delay)
+  return function()
+    -- Cancel existing timer if any
+    if _debounce_timers[timer_key] then
+      vim.fn.timer_stop(_debounce_timers[timer_key])
+    end
+    -- Start new timer
+    _debounce_timers[timer_key] = vim.fn.timer_start(delay, function()
+      _debounce_timers[timer_key] = nil
+      fn()
+    end)
+  end
+end
+
 ---@type string
 local current_statusline = ""
 
@@ -101,14 +125,18 @@ local function setup_autocmds()
     callback = render_callback,
   })
 
+  -- Debounced CursorMoved (50ms delay to reduce refresh frequency)
+  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 50)
   safe_autocmd("CursorMoved", {
     group = augroup,
-    callback = render_callback,
+    callback = cursor_moved_debounced,
   })
 
+  -- Debounced CursorMovedI (50ms delay for insert mode)
+  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 50)
   safe_autocmd("CursorMovedI", {
     group = augroup,
-    callback = render_callback,
+    callback = cursor_moved_i_debounced,
   })
 
   safe_autocmd("BufWritePost", {
@@ -141,6 +169,15 @@ local function setup_autocmds()
   safe_autocmd("ModeChanged", {
     group = augroup,
     callback = function()
+      -- Cancel pending debounce timers for immediate mode change response
+      if _debounce_timers.cursor_moved then
+        vim.fn.timer_stop(_debounce_timers.cursor_moved)
+        _debounce_timers.cursor_moved = nil
+      end
+      if _debounce_timers.cursor_moved_i then
+        vim.fn.timer_stop(_debounce_timers.cursor_moved_i)
+        _debounce_timers.cursor_moved_i = nil
+      end
       require("fancyline.renderer").invalidate({ "mode" })
       M.refresh()
     end,

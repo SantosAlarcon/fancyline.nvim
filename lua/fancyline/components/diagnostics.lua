@@ -1,5 +1,8 @@
 local M = {}
 
+-- Hoist require to module level for performance
+local diag_utils_ok, diag_utils = pcall(require, "fancyline.utils.diagnostics")
+
 -- Define diagnostic states with their colors
 local DIAG_STATES = {
   error = { hl = "FancylineDiagError", fg = "#f44336" },
@@ -13,7 +16,7 @@ local DIAG_STATES = {
 ---@param ctx FancylineContext
 ---@return FancylineComponentResult[]?
 function M.provider(opts, ctx)
-  local diag_utils_ok, diag_utils = pcall(require, "fancyline.utils.diagnostics")
+  -- Use module-level diag_utils (hoisted for performance)
   if not diag_utils_ok then
     return nil
   end

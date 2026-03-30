@@ -1,11 +1,14 @@
 local M = {}
 
+-- Hoist require to module level for performance
+local lsp_utils_ok, lsp_utils = pcall(require, "fancyline.utils.lsp")
+
 ---Provider function for the LSP component.
 ---@param opts? FancylineLspComponent
 ---@param ctx FancylineContext
 ---@return FancylineComponentResult?
 function M.provider(opts, ctx)
-  local lsp_utils_ok, lsp_utils = pcall(require, "fancyline.utils.lsp")
+  -- Use module-level lsp_utils (hoisted for performance)
   if not lsp_utils_ok then
     return nil
   end

@@ -1,5 +1,8 @@
 local M = {}
 
+-- Hoist require to module level for performance
+local devicons = require("fancyline.utils.devicons")
+
 -- Fallback icon map (usado si no hay plugins de iconos)
 local fallback_icons = {
   lua = "󰢱",
@@ -58,8 +61,7 @@ local function get_icon_for_filetype(filetype)
     return result
   end
 
-  -- 2. Try nvim-web-devicons
-  local devicons = require("fancyline.utils.devicons")
+  -- 2. Try nvim-web-devicons (use module-level require)
   local icon = devicons.get_icon_by_filetype(filetype)
   if icon then
     return icon

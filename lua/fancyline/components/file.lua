@@ -1,5 +1,8 @@
 local M = {}
 
+-- Hoist require to module level for performance
+local devicons_ok, devicons = pcall(require, "fancyline.utils.devicons")
+
 ---Provider function for the file component.
 ---@param opts? FancylineFileComponent
 ---@param ctx FancylineContext
@@ -56,8 +59,7 @@ function M.provider(opts, ctx)
 		local icon_bg = opts.icon and opts.icon.bg
 
 		if opts.use_devicon ~= false then
-			-- Get icon for filetype using get_filetype_icon
-			local devicons_ok, devicons = pcall(require, "fancyline.utils.devicons")
+			-- Get icon for filetype using module-level devicons
 			local devicon = devicons_ok and devicons.get_filetype_icon(bufnr) or nil
 			if devicon then
 				icon_symbol = devicon

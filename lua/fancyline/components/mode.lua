@@ -1,5 +1,8 @@
 local M = {}
 
+-- Hoist require to module level for performance
+local theme = require("fancyline.themes")
+
 -- Map modes to their highlight group name
 local mode_highlights = {
   n = "FancylineModeNormal",
@@ -41,7 +44,9 @@ local mode_theme_keys = {
 ---@param ctx FancylineContext
 ---@return FancylineComponentResult?
 function M.provider(opts, ctx)
-  local current_mode = vim.fn.mode(1)
+  -- Use faster API instead of vim.fn.mode(1)
+  local mode_info = vim.api.nvim_get_mode()
+  local current_mode = mode_info and mode_info.mode or vim.fn.mode(1)
 
   -- If opts is a function, call it with the current mode
   if type(opts) == "function" then
@@ -110,8 +115,7 @@ function M.provider(opts, ctx)
   -- Get highlight based on current mode
   local highlight = mode_highlights[current_mode] or "FancylineModeNormal"
 
-  -- Get mode color from theme
-  local theme = require("fancyline.themes")
+  -- Get mode color from theme (use module-level require)
   local current_theme = theme.get("auto")
   local mode_color = current_theme.modes[mode_theme_keys[current_mode]] or "#ABB2BF"
 
