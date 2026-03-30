@@ -53,7 +53,6 @@ local static_icon_map = {
 
   -- Docs & Text
   markdown = "󰍔",
-  md = "󰍔",
   tex = "󰎔",
   pdf = "󰦝",
   txt = "󰍔",

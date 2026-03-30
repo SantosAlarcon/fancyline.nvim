@@ -5,6 +5,7 @@ local M = {
   full = require("fancyline.presets.full"),
   ["git-focused"] = require("fancyline.presets.git-focused"),
   vscode = require("fancyline.presets.vscode"),
+  pill = require("fancyline.presets.pill"),
   slim = require("fancyline.presets.slim"),
   rounded = require("fancyline.presets.rounded"),
   angular = require("fancyline.presets.angular"),

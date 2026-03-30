@@ -122,6 +122,26 @@ local function resolve_shade_color(color_spec)
 
   local shade_match = color_spec:match("^shade_(%d+)$")
   if shade_match then
+  local function resolve_shade_color(color_spec)
+  if type(color_spec) ~= "string" then
+    return color_spec
+  end
+  local shade_match = color_spec:match("^shade_(%d+)$")
+  print("DEBUG resolve_shade_color:", color_spec, "match:", shade_match)
+  if shade_match then
+    if not cached_theme then
+      print("DEBUG: updating cache")
+      update_theme_cache()
+    end
+    print("DEBUG cached_shades:", vim.inspect(cached_shades))
+    local shade_key = "shade_" .. shade_match
+    if cached_shades[shade_key] then
+      print("DEBUG: returning", cached_shades[shade_key])
+      return cached_shades[shade_key]
+    end
+  end
+  return color_spec
+end
     if not cached_theme then
       update_theme_cache()
     end
@@ -295,11 +315,11 @@ function M.render_with_icon(icon_cfg, text, style_name, highlight, text_fg, text
   if not icon_fg then icon_fg = icon_data.fg end
   if not icon_bg then icon_bg = icon_data.bg end
 
-  -- Resolve "mode" colors
-  icon_fg = resolve_mode_color(icon_fg, state)
-  icon_bg = resolve_mode_color(icon_bg, state)
-  text_fg = resolve_mode_color(text_fg, state)
-  text_bg = resolve_mode_color(text_bg, state)
+  -- Resolve "mode" and "shade_X" colors
+  icon_fg = resolve_shade_color(resolve_mode_color(icon_fg, state))
+  icon_bg = resolve_shade_color(resolve_mode_color(icon_bg, state))
+  text_fg = resolve_shade_color(resolve_mode_color(text_fg, state))
+  text_bg = resolve_shade_color(resolve_mode_color(text_bg, state))
 
   -- Determine text colors
   local base_hl = highlight or "FancylineComponent"
@@ -405,11 +425,11 @@ function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, s
   if not icon_fg then icon_fg = icon_data.fg end
   if not icon_bg then icon_bg = icon_data.bg end
 
-  -- Resolve "mode" colors
-  icon_fg = resolve_mode_color(icon_fg, state)
-  icon_bg = resolve_mode_color(icon_bg, state)
-  fg = resolve_mode_color(fg, state)
-  bg = resolve_mode_color(bg, state)
+  -- Resolve "mode" and "shade" colors
+  icon_fg = resolve_shade_color(resolve_mode_color(icon_fg, state))
+  icon_bg = resolve_shade_color(resolve_mode_color(icon_bg, state))
+  fg = resolve_shade_color(resolve_mode_color(fg, state))
+  bg = resolve_shade_color(resolve_mode_color(bg, state))
 
   -- Get style for each side
   local left_style_name = border_cfg.left and border_cfg.left.style or "round"
@@ -418,9 +438,9 @@ function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, s
   local right_style = M.get_style(right_style_name)
 
   -- Border colors with defaults from theme and resolve "mode" and "shade_X"
-  local left_fg = resolve_mode_color(border_cfg.left and border_cfg.left.fg, state) or default_border
+  local left_fg = resolve_shade_color(resolve_mode_color(border_cfg.left and border_cfg.left.fg, state)) or default_border
   local left_bg = resolve_shade_color(resolve_mode_color(border_cfg.left and border_cfg.left.bg, state)) or "NONE"
-  local right_fg = resolve_mode_color(border_cfg.right and border_cfg.right.fg, state) or default_border
+  local right_fg = resolve_shade_color(resolve_mode_color(border_cfg.right and border_cfg.right.fg, state)) or default_border
   local right_bg = resolve_shade_color(resolve_mode_color(border_cfg.right and border_cfg.right.bg, state)) or "NONE"
 
   -- Content gap between icon and text
@@ -456,5 +476,14 @@ function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, s
 
   return table.concat(parts, "")
 end
+
+-- Invalidate theme cache on colorscheme change
+vim.api.nvim_create_autocmd("Colorscheme", {
+  callback = function()
+    cached_theme = nil
+    cached_modes = nil
+    cached_shades = nil
+  end,
+})
 
 return M

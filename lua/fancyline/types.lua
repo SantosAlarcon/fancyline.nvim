@@ -226,7 +226,7 @@
 ---@field oil? boolean Enable Oil.nvim statusline extension
 
 ---@class FancylineConfig
----@field preset? string Preset name: "default", "minimal", "standard", "full", "git-focused", "vscode", "slim", "rounded", "angular", "diagonal", "arrows"
+---@field preset? string Preset name: "default", "minimal", "standard", "full", "git-focused", "vscode", "slim", "rounded", "angular", "diagonal", "arrows", "pill"
 ---@field sections? FancylineSections Statusline sections layout
 ---@field components? FancylineComponents Per-component configuration
 ---@field style? FancylineStyles Border style definitions (extends defaults)

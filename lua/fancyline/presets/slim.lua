@@ -2,7 +2,7 @@ return {
   sections = {
     left = { "mode" },
     center = { "file" },
-    right = { "cursor" },
+    right = { "position" },
   },
   components = {
     mode = {
@@ -50,7 +50,7 @@ return {
       icon = "",
       style = "none",
     },
-    cursor = {
+    position = {
       icon = "",
       format = "Ln %l, Col %c",
       style = "none",

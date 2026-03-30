@@ -71,7 +71,7 @@ require("fancyline").setup()
 
 ```lua
 require("fancyline").setup({
-  preset = "default",  -- or "minimal", "standard", "full", "git-focused", "vscode", "slim"
+  preset = "default",  -- or "minimal", "standard", "full", "git-focused", "vscode", "slim", "pill"
 })
 ```
 
@@ -90,6 +90,7 @@ Available presets:
 | `angular` | With square borders |
 | `diagonal` | With slanted borders |
 | `arrows` | With arrow borders |
+| `pill` | With rounded borders in both sides |
 
 ### Themes
 
