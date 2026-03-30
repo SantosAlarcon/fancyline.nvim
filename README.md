@@ -30,7 +30,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 ## Features
 
 - **33 Components** - Mode, git info, file, diagnostics, LSP, position, and more
-- **20 Built-in Themes** - Auto-detects your colorscheme (tokyonight, catppuccin, dracula, nord, github, and more)
+- **20 Built-in Themes** - Auto-detects your colorscheme (tokyonight, catppuccin, dracula, nord, github, material with 5 variants, and more)
 - **11 Presets** - From minimal to full-featured, with styled border variants
 - **Custom Borders** - Fully customizable with separate styles and colors for each side
 - **Icon Providers** - Supports mini.icons, nvim-web-devicons, or fallback icons

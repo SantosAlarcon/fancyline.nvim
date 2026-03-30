@@ -349,7 +349,7 @@ Supported themes:
     sonokai            Sonokai
     cyberdream         Cyberdream
     vscode             VSCode
-    material           Material
+    material           Material (deep_ocean/oceanic/palenight/darker/lighter)
     solarized_osaka    Solarized Osaka
     nordic             Nordic
     moonfly            Moonfly

@@ -82,6 +82,13 @@ local variant_patterns = {
   dracula = {
     dracula = { "soft" },
   },
+  material = {
+    deep_ocean = { "deep-ocean", "deep_ocean" },
+    oceanic = { "oceanic" },
+    palenight = { "palenight" },
+    darker = { "darker" },
+    lighter = { "lighter" },
+  },
 }
 
 ---Get a theme by name or detect from colorscheme

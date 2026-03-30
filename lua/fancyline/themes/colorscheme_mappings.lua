@@ -80,6 +80,11 @@ return {
   material = {
     "material",
     "material-nvim",
+    "material-deep-ocean",
+    "material-oceanic",
+    "material-palenight",
+    "material-darker",
+    "material-lighter",
   },
   solarized_osaka = {
     "solarized-osaka",
