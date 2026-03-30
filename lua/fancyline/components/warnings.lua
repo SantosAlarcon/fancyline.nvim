@@ -1,0 +1,31 @@
+local M = {}
+
+local DIAG_STATE = { hl = "FancylineDiagWarn", fg = "#ff9800" }
+
+---Provider function for the warnings component.
+---@param opts? FancylineWarningsComponent
+---@param ctx FancylineContext
+---@return FancylineComponentResult?
+function M.provider(opts, ctx)
+  local diag_utils_ok, diag_utils = pcall(require, "fancyline.utils.diagnostics")
+  if not diag_utils_ok then
+    return nil
+  end
+
+  local counts = diag_utils.get_counts(ctx.bufnr)
+
+  if counts.warn == 0 then
+    return nil
+  end
+
+  local icon = opts.icon or "󰀦"
+
+  return {
+    text = icon .. " " .. counts.warn,
+    highlight = DIAG_STATE.hl,
+    fg = DIAG_STATE.fg,
+    style = opts.style or "none",
+  }
+end
+
+return M

@@ -21,6 +21,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
   - [Components](#components)
   - [Custom Borders](#custom-borders)
   - [Dynamic Colors](#dynamic-colors)
+  - [Type Annotations](#type-annotations)
 - [Components Reference](#components-reference)
 - [API](#api)
 - [Project Structure](#project-structure)
@@ -35,6 +36,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 - **Icon Providers** - Supports mini.icons, nvim-web-devicons, or fallback icons
 - **Theme Variants** - Automatic dark/light variant detection
 - **Performance** - Throttled refresh, no unnecessary re-renders
+- **TypeScript-ready** - Full LuaLS type annotations for excellent IDE completion support
 
 ## Requirements
 
@@ -170,6 +172,43 @@ Colors can reference theme values:
 - `"mode"` - Current Vim mode color
 - `"shade_X"` - Theme shade (1-10, dark to light)
 
+### Type Annotations
+
+Fancyline includes full LuaLS type annotations for excellent IDE and completion plugin support. When configuring fancyline, your editor will show field names and descriptions.
+
+```lua
+require("fancyline").setup({
+    preset = "default",          -- Completion shows available presets
+    sections = {                 -- Completion shows component names
+        left = { "mode", "git_branch" },
+        right = { "position" },
+    },
+    components = {
+        mode = {                  -- Completion shows all mode options
+            icon = "neovim",
+            text = { n = "NORMAL", i = "INSERT" },
+            style = "round",
+            colors = { n = "#61afef" },
+        },
+        diagnostics = {           -- Completion shows diagnostics options
+            icon = "󰅴",
+            icons = { error = "!", warn = "~" },
+        },
+        position = {              -- Completion shows position options
+            format = "Ln %l, Col %c",
+        },
+    },
+})
+```
+
+Type annotations include:
+- `FancylineConfig` - Main configuration table
+- `FancylineSections` - Section layout
+- `FancylineComponents` - All component options
+- Component-specific types (e.g., `FancylineModeComponent`, `FancylineDiagnosticsComponent`)
+
+For full type documentation, run `:help fancyline` in Neovim.
+
 ## Components Reference
 
 | Component | Description |
@@ -226,6 +265,7 @@ require("fancyline").get_config()   -- Get current config
 lua/fancyline/
 ├── init.lua            -- Entry point
 ├── config.lua          -- Default config
+├── types.lua           -- LuaLS type annotations
 ├── statusline.lua      -- Statusline renderer
 ├── themes/
 │   ├── init.lua        -- Theme loader & auto-detection

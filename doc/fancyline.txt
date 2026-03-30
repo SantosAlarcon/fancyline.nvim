@@ -1,0 +1,508 @@
+*fancyline.txt*        A modern, configurable statusline for Neovim
+
+==============================================================================
+CONTENTS                                                    *fancyline-contents*
+
+    1. Introduction ........................ |fancyline-intro|
+    2. Setup .............................. |fancyline-setup|
+    3. Configuration ....................... |fancyline-config|
+    4. Components ......................... |fancyline-components|
+    5. Presets ............................. |fancyline-presets|
+    6. Themes .............................. |fancyline-themes|
+    7. Extensions .......................... |fancyline-extensions|
+    8. API Functions ....................... |fancyline-api|
+    9. Highlight Groups ..................... |fancyline-highlights|
+
+==============================================================================
+INTRODUCTION                                                 *fancyline-intro*
+
+Fancyline is a modern, highly configurable statusline plugin for Neovim. It
+provides beautiful statusline components with built-in theming support,
+presets for common configurations, and extensions for popular plugins.
+
+Features:
+- 33+ built-in components
+- 11 preset configurations
+- 20+ theme integrations
+- Extension support for Telescope, Oil, and more
+- LuaLS type annotations for completion plugins
+
+==============================================================================
+SETUP                                                        *fancyline-setup*
+
+Basic setup with defaults: >
+
+    require("fancyline").setup({})
+
+Minimal setup with a preset: >
+
+    require("fancyline").setup({
+        preset = "default",
+    })
+
+Full custom configuration: >
+
+    require("fancyline").setup({
+        sections = {
+            left = { "mode", "git_branch", "git_diff" },
+            center = { "file" },
+            right = { "diagnostics", "lsp", "filetype", "position" },
+        },
+        components = {
+            mode = {
+                icon = "neovim",
+                text = { n = "NORMAL", i = "INSERT" },
+                style = "round",
+            },
+        },
+        theme = "tokyonight",
+    })
+
+==============================================================================
+CONFIGURATION                                           *fancyline-config*
+
+Configuration is passed to `require("fancyline").setup(opts)`. All options
+are optional.
+
+CONFIG STRUCTURE                                    *fancyline-config-structure*
+
+    {
+        preset = "default",           -- Preset name (see |fancyline-presets|)
+        sections = { ... },           -- Section layout (see below)
+        components = { ... },        -- Per-component options
+        style = { ... },             -- Border style definitions
+        separator = " │ ",           -- Section separator
+        refresh = { ... },            -- Refresh settings
+        theme = "auto",               -- Theme selection
+        extensions = { ... },         -- Extension settings
+    }
+
+SECTIONS                                                *fancyline-sections*
+
+Sections define the layout of the statusline: >
+
+    sections = {
+        left = { "mode", "git_branch", "git_diff" },
+        center = { "file" },
+        right = { "diagnostics", "lsp", "filetype", "position" },
+    }
+
+Each section is an array of component names. Components are rendered left-to-right.
+
+REFRESH SETTINGS                                    *fancyline-refresh-config*
+
+    refresh = {
+        enabled = true,      -- Enable periodic refresh (default: true)
+        interval = 16,       -- Refresh interval in ms (default: 16)
+    }
+
+STYLE DEFINITIONS                                    *fancyline-style-config*
+
+Override default border styles: >
+
+    style = {
+        round = { left = "", right = "", icon_gap = "  " },
+        square = { left = "󰝤", right = "󰝤", icon_gap = "  " },
+    }
+
+Each style has:
+- `left`: Left border character
+- `right`: Right border character
+- `icon_gap`: Gap between icon and text
+
+==============================================================================
+COMPONENTS                                             *fancyline-components*
+
+Fancyline provides 33+ built-in components. Each component can be configured
+by adding its name to `components` in your config.
+
+COMPONENT LIST                                      *fancyline-component-list*
+
+    mode              Current vim mode with icon
+    file              Current file name and path
+    git_branch        Current git branch name
+    git_diff          Git diff summary (added/changed/removed)
+    git_signs         Git signs status (requires gitsigns.nvim)
+    diagnostics       All diagnostics count
+    errors            Error count only
+    warnings          Warning count only
+    infos             Info count only
+    hints             Hint count only
+    lsp               LSP server status
+    lsp_progress      LSP progress/messages
+    lsp_clients       Connected LSP clients
+    filetype          File type with icon
+    encoding          File encoding
+    fileformat        File format (unix/dos/mac)
+    filesize          File size
+    indent            Indentation info (tabs/spaces)
+    treesitter        Treesitter status (requires nvim-treesitter)
+    position          Cursor position (line, column)
+    bufnr             Buffer number
+    tabnr             Tab number
+    cwd               Current working directory
+    project           Project/root directory
+    quickfix          Quickfix list status
+    checktime         File check status
+    macro_recording   Macro recording indicator
+    search_stats      Search statistics
+    spell             Spell check status
+    reload            Reload indicator
+    branch_status     Git ahead/behind status
+    commit_msg        Current commit message
+    dap               DAP debugging status (requires nvim-dap)
+
+COMPONENT OPTIONS                              *fancyline-component-options*
+
+All components accept these base options:
+
+    icon = "X",           -- Icon symbol or FancylineIconConfig table
+    style = "round",      -- Border style: round, square, slanted,
+                          -- arrow, tagged, none
+    fg = "#hex",          -- Foreground color override
+    bg = "#hex",          -- Background color override
+    border = { ... },     -- Custom border per side
+
+MODE COMPONENT                                   *fancyline-mode-component*
+
+    text = {                     -- Mode key to display text mapping
+        n = "NORMAL",
+        i = "INSERT",
+        v = "VISUAL",
+        V = "V-LINE",
+        ["^V"] = "V-BLOCK",
+        t = "TERMINAL",
+        ["!"] = "TERMINAL",
+        c = "COMMAND",
+        r = "REPLACE",
+        R = "V-REPLACE",
+        rv = "V-REPLACE",
+        s = "SELECT",
+        S = "S-LINE",
+        ["^S"] = "S-BLOCK",
+    },
+    colors = { n = "#color" },  -- Per-mode color overrides
+    icon = "neovim",            -- Special: shows Neovim/Vim logo
+
+Special icon values:
+- `"neovim"` - Shows Neovim logo ()
+- `"vim"` - Shows Vim logo ()
+- `"false"` - No icon
+
+FILE COMPONENT                                   *fancyline-file-component*
+
+    use_devicon = true,              -- Show file type icon (default: true)
+    empty_name = "[Empty]",           -- Text for unnamed buffers
+    icons = {                         -- File state icons
+        modified = "●",
+        readonly = "󰌾",
+    }
+
+DIAGNOSTICS COMPONENT                       *fancyline-diagnostics-component*
+
+    icon = "󰅴",                      -- Main icon
+    icons = {                         -- Per-severity icons
+        error = "",
+        warn = "",
+        info = "",
+        hint = "💡",
+    }
+
+POSITION COMPONENT                         *fancyline-position-component*
+
+    format = "Ln %l, Col %c",       -- Format string with placeholders:
+                                     -- %l = line, %c = column,
+                                     -- %L = total lines,
+                                     -- %p = percent, %P = percent%%
+
+FILETYPE COMPONENT                         *fancyline-filetype-component*
+
+    icon = "󰘴",                       -- Custom icon or FancylineIconConfig
+    lowercase = false,                -- Display in lowercase
+    uppercase = false,                -- Display in uppercase
+    titlecase = false,                -- Display in title case
+    show_text = true,                 -- Show filetype text
+
+LSP CLIENTS COMPONENT                   *fancyline-lsp_clients-component*
+
+    max_clients = 3,                  -- Maximum clients to display
+    show_version = true,              -- Show LSP server version
+
+INDENT COMPONENT                           *fancyline-indent-component*
+
+    icon = "󰌒",                       -- Icon prefix
+    spaces_text = "Spaces",           -- Custom label for spaces
+    tabs_text = "Tabs",               -- Custom label for tabs
+
+GIT SIGNS COMPONENT                     *fancyline-git_signs-component*
+
+    icons = {                         -- Per-hunk icons
+        added = "│",
+        changed = "▎",
+        deleted = "┌",
+    }
+
+CWD COMPONENT                                 *fancyline-cwd-component*
+
+    max_length = 3,                   -- Maximum path depth to show
+
+COMMIT MSG COMPONENT                 *fancyline-commit_msg-component*
+
+    max_length = 50,                  -- Maximum message length (truncates)
+
+DAP COMPONENT                               *fancyline-dap-component*
+
+    icons = {                         -- Per-state icons
+        running = "▶",
+        stopped = "■",
+        breakpoint = "●",
+        exception = "◆",
+    }
+
+CUSTOM ICON CONFIGURATION                   *fancyline-icon-config*
+
+Some components accept an icon configuration table:
+
+    icon = {
+        symbol = "X",                 -- Icon character
+        fg = "#color",               -- Foreground color
+        bg = "#color",               -- Background color
+        states = {                   -- Per-state colors
+            modified = { fg = "#color", bg = "#color" },
+        },
+    }
+
+CUSTOM BORDER CONFIGURATION                 *fancyline-border-config*
+
+    border = {
+        left = {
+            style = "round",          -- Border style
+            fg = "#color",            -- Or "mode" for mode color
+            bg = "#color",
+        },
+        right = { ... },
+        content_gap = " ",           -- Gap between icon and text
+    }
+
+==============================================================================
+PRESETS                                                  *fancyline-presets*
+
+Presets provide quick configuration for common use cases. Use with `preset =
+"name"` in your setup config.
+
+Available presets:
+
+minimal          Minimal mode + file only
+default          Standard layout with git and lsp
+standard         Extended default with diagnostics
+full             Full featured with many components
+git-focused      Optimized for git workflows
+vscode           VSCode-like statusline
+slim             Compact slim design
+rounded          Rounded borders throughout
+angular          Angular bracket style
+diagonal         Diagonal style separators
+arrows           Arrow-based separators
+
+Example usage: >
+
+    require("fancyline").setup({
+        preset = "minimal",
+    })
+
+Or combine preset with customizations: >
+
+    require("fancyline").setup({
+        preset = "default",
+        components = {
+            mode = { icon = "neovim" },
+        },
+    })
+
+==============================================================================
+THEMES                                                    *fancyline-themes*
+
+Fancyline automatically detects and matches your colorscheme. Theme can be
+set as:
+
+    theme = "auto",              -- Auto-detect from colorscheme (default)
+    theme = "tokyonight",        -- Force specific theme
+    theme = {                    -- Theme with variant
+        name = "tokyonight",
+        variant = "night",
+    },
+
+Supported themes:
+
+    tokyonight         Tokyo Night (night/storm/moon/day)
+    catppuccin         Catppuccin (mocha/frappe/macchiato/latte)
+    dracula            Dracula
+    nord               Nord
+    github             GitHub (dark/light)
+    kanagawa           Kanagawa (wave/dragon/lotus)
+    rose_pine          Rose Pine (main/moon/dawn)
+    nordfox            Nord Fox
+    onedark            One Dark
+    oxocarbon          Oxocarbon
+    nightfox           Nightfox
+    everforest         Everforest
+    sonokai            Sonokai
+    cyberdream         Cyberdream
+    vscode             VSCode
+    material           Material
+    solarized_osaka    Solarized Osaka
+    nordic             Nordic
+    moonfly            Moonfly
+    gruvbox            Gruvbox
+    andromeda          Andromeda
+
+Customizing mode colors per component: >
+
+    require("fancyline").setup({
+        components = {
+            mode = {
+                colors = {
+                    n = "#61afef",
+                    i = "#98c379",
+                    v = "#c678dd",
+                },
+            },
+        },
+    })
+
+==============================================================================
+EXTENSIONS                                            *fancyline-extensions*
+
+Extensions add statusline support for other plugins. Enable in setup:
+
+    require("fancyline").setup({
+        extensions = {
+            telescope = true,
+            oil = true,
+        },
+    })
+
+TELESCOPE EXTENSION                            *fancyline-telescope*
+
+Shows Telescope picker state when using telescope.nvim. Enable with
+`telescope = true`.
+
+OIL EXTENSION                                      *fancyline-oil*
+
+Shows Oil.nvim directory browser state. Enable with `oil = true`.
+
+==============================================================================
+API FUNCTIONS                                              *fancyline-api*
+
+Fancyline provides the following API functions:
+
+setup({opts})                                           *fancyline.setup()*
+    Initialize fancyline with configuration options.
+    See |fancyline-config| for available options.
+
+render()                                                *fancyline.render()*
+    Force render the statusline. Returns the statusline string.
+
+enable()                                                *fancyline.enable()*
+    Enable the fancyline statusline.
+
+disable()                                              *fancyline.disable()*
+    Disable fancyline and clear the statusline.
+
+refresh()                                              *fancyline.refresh()*
+    Force refresh the statusline (re-render without full reset).
+
+get_config()                                        *fancyline.get_config()*
+    Returns the current configuration table.
+
+reload()                                                *fancyline.reload()*
+    Reload highlights and re-render the statusline.
+
+Example keybinding for manual refresh: >
+
+    vim.keymap.set("n", "<leader>fr", function()
+        require("fancyline").refresh()
+    end, { desc = "Refresh Fancyline" })
+
+Example toggle: >
+
+    vim.keymap.set("n", "<leader>ft", function()
+        local fancyline = require("fancyline")
+        if vim.o.statusline:match("fancyline") then
+            fancyline.disable()
+        else
+            fancyline.enable()
+        end
+    end, { desc = "Toggle Fancyline" })
+
+==============================================================================
+HIGHLIGHT GROUPS                                   *fancyline-highlights*
+
+Fancyline creates the following highlight groups. Customize them in your
+colorscheme or with |nvim_set_hl|:
+
+MODE HIGHLIGHTS
+    FancylineModeNormal           Normal mode color
+    FancylineModeInsert           Insert mode color
+    FancylineModeVisual           Visual mode color
+    FancylineModeSelect           Select mode color
+    FancylineModeTerminal         Terminal mode color
+    FancylineModeCommand          Command mode color
+    FancylineModeReplace          Replace mode color
+
+GIT HIGHLIGHTS
+    FancylineGitBranch            Git branch color
+    FancylineGitAdded             Added lines color
+    FancylineGitRemoved           Removed lines color
+    FancylineGitChanged           Changed lines color
+    FancylineGitUntracked         Untracked files color
+    FancylineGitDiff              Diff summary color
+
+FILE HIGHLIGHTS
+    FancylineFile                 File name color
+    FancylineFileModified         Modified indicator color
+    FancylineFileReadonly         Readonly indicator color
+
+DIAGNOSTICS HIGHLIGHTS
+    FancylineDiagnostics          Main diagnostics color
+    FancylineDiagError            Error color
+    FancylineDiagWarn             Warning color
+    FancylineDiagInfo             Info color
+    FancylineDiagHint             Hint color
+
+OTHER HIGHLIGHTS
+    FancylineLsp                  LSP indicator color
+    FancylineFiletype             Filetype color
+    FancylineCursor               Cursor/position color
+    FancylineSeparator            Separator color
+    FancylineBorder               Border color
+    FancylineShade1-10            Shade highlight colors
+
+Example customization: >
+
+    vim.api.nvim_set_hl(0, "FancylineModeNormal", {
+        fg = "#61afef",
+        bg = "NONE",
+    })
+
+Or in a colorscheme: >
+
+    -- In your colorscheme
+    vim.api.nvim_set_hl(0, "FancylineModeNormal", { fg = "#61afef" })
+    vim.api.nvim_set_hl(0, "FancylineModeInsert", { fg = "#98c379" })
+
+==============================================================================
+LUA LANGUAGE SERVER                              *fancyline-lua-ls*
+
+Fancyline includes LuaLS type annotations for excellent completion support.
+Completion plugins like nvim-cmp will show field names and descriptions when
+configuring fancyline.
+
+All types are defined in `lua/fancyline/types.lua`:
+- `FancylineConfig` - Main configuration table
+- `FancylineSections` - Section layout
+- `FancylineComponents` - Per-component options
+- Individual component types (e.g., `FancylineModeComponent`)
+
+==============================================================================
+vim:tw=78:ts=8:noet:ft=help:norl:

@@ -1,0 +1,14 @@
+{
+  "workspace.library": [
+    "${3rd}/luv/library"
+  ],
+  "runtime.version": "LuaJIT",
+  "diagnostics.globals": [
+    "vim",
+    "MiniIcons"
+  ],
+  "workspace.checkThirdParty": false,
+  "typeFormatConfig": {
+    "typeAnnotationMaxLineLength": 120
+  }
+}
