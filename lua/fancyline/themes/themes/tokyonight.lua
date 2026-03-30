@@ -38,6 +38,7 @@ return {
     encoding = "#a9b1d6",
     indent = "#565f89",
     position = "#565f89",
+    foreground = "#c0caf5",
     background = "#1a1b26",
     primary = "#7aa2f7",
     shades = {
@@ -92,6 +93,7 @@ return {
     encoding = "#7aa2f7",
     indent = "#3b4261",
     position = "#3b4261",
+    foreground = "#c0caf5",
     background = "#1f1f2b",
     primary = "#7aa2f7",
     shades = {
@@ -146,6 +148,7 @@ return {
     encoding = "#6183bb",
     indent = "#3b4261",
     position = "#3b4261",
+    foreground = "#c0caf5",
     background = "#1a1b26",
     primary = "#6183bb",
     shades = {
@@ -200,6 +203,7 @@ return {
     encoding = "#2563eb",
     indent = "#a9b1d6",
     position = "#a9b1d6",
+    foreground = "#24283b",
     background = "#fafafa",
     primary = "#2563eb",
     shades = {

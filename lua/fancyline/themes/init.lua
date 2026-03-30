@@ -24,6 +24,7 @@ local mappings = require("fancyline.themes.colorscheme_mappings")
 ---@field cursor? string
 ---@field separator? string
 ---@field border? string
+---@field foreground? string Default text color for statusline
 ---@field background? string
 ---@field primary? string
 ---@field shades? table<string, string>
@@ -208,6 +209,7 @@ function M.get_default()
     cursor = "#abb2bf",
     separator = "#5c6370",
     border = "#5c6370",
+    foreground = "#abb2bf",
     background = "transparent",
   }
 end
@@ -259,18 +261,18 @@ function M.apply(theme)
   if theme.background == "auto" then
     local bg = get_colorscheme_background()
     if bg then
-      vim.api.nvim_set_hl(0, "StatusLine", { bg = bg, fg = "NONE", bold = false })
-      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = bg, fg = "NONE", bold = false })
+      vim.api.nvim_set_hl(0, "StatusLine", { bg = bg, fg = theme.foreground or "NONE", bold = false })
+      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = bg, fg = theme.foreground or "NONE", bold = false })
     else
-      vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE", bold = false })
-      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE", bold = false })
+      vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
+      vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
     end
   elseif theme.background == "transparent" then
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = "NONE", bold = false })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = "NONE", bold = false })
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "NONE", fg = theme.foreground or "NONE", bold = false })
   elseif theme.background then
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = "NONE", bold = false })
-    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = "NONE", bold = false })
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.background, fg = theme.foreground or "NONE", bold = false })
+    vim.api.nvim_set_hl(0, "StatusLineNC", { bg = theme.background, fg = theme.foreground or "NONE", bold = false })
   end
 
   -- Apply shade highlights if defined

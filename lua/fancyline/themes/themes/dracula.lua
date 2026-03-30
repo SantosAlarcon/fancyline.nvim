@@ -38,6 +38,7 @@ return {
     encoding = "#8be9fd",
     indent = "#6272a4",
     position = "#6272a4",
+    foreground = "#f8f8f2",
     background = "#282a36",
     primary = "#bd93f9",
     shades = {
@@ -92,6 +93,7 @@ return {
     encoding = "#8ae5ff",
     indent = "#6272a4",
     position = "#6272a4",
+    foreground = "#f8f8f2",
     background = "#282a36",
     primary = "#caa9fa",
     shades = {

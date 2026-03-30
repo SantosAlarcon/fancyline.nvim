@@ -219,6 +219,7 @@
 ---@class FancylineTheme
 ---@field name? string Theme name: "tokyonight", "catppuccin", "dracula", "nord", "github", "kanagawa", "rose_pine", "nordfox", "onedark", "oxocarbon", "nightfox", "everforest", "sonokai", "cyberdream", "vscode", "material", "solarized_osaka", "nordic", "moonfly", "gruvbox", "andromeda"
 ---@field variant? string Theme variant (e.g., "night", "storm", "moon", "day" for tokyonight)
+---@field foreground? string Default text color for statusline
 
 ---@class FancylineExtensions
 ---@field telescope? boolean Enable Telescope statusline extension
