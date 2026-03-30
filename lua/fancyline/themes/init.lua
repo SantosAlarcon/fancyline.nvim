@@ -364,6 +364,11 @@ function M.apply(theme)
       end
     end
   end
+
+  -- Create padding highlight with primary color for horizontal padding (right side only)
+  if theme.primary then
+    set_hl("FancylinePaddingRight", { fg = theme.primary, bg = theme.primary })
+  end
 end
 
 return M

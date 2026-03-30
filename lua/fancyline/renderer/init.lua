@@ -216,6 +216,15 @@ function M.render(config)
   local center_content = render_section(sections.center or {})
   local right_content = render_section(sections.right or {})
 
+  -- Add horizontal padding (left: spaces, right: primary color)
+  if left_content ~= "" then
+    left_content = " " .. left_content
+  end
+
+  if right_content ~= "" then
+    right_content = right_content .. " %#FancylinePaddingRight#%*"
+  end
+
   local separator = "  " .. (config.separator or "│") .. "  "
 
   local parts = {}
