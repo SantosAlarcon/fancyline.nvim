@@ -4,8 +4,8 @@ local M = {}
 M.styles = {
 	square = { left = "█", right = "█", icon_gap = " " },
 	round = { left = "", right = "", icon_gap = " " },
-	slanted = { left = "", right = "", icon_gap = " " },
-	arrow = { left = "", right = "", icon_gap = " " },
+	slanted = { left = "", right = "█", icon_gap = " " },
+	arrow = { left = "", right = "█", icon_gap = " " },
 	none = { left = "", right = "", icon_gap = " " },
 	tagged = { left = "█", right = " ", icon_gap = " " },
 }

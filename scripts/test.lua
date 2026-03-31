@@ -15,7 +15,6 @@ local function test(name, condition, msg)
 	return true
 end
 
-
 local failures = 0
 local passed = 0
 
