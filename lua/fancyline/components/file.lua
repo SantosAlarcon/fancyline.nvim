@@ -54,7 +54,7 @@ function M.provider(opts, ctx)
 			bg = opts.icon.bg,
 		}
 	else
-		local icon_symbol = " "
+		local icon_symbol = ""
 		local icon_fg = opts.icon and opts.icon.fg
 		local icon_bg = opts.icon and opts.icon.bg
 
