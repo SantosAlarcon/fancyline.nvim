@@ -18,29 +18,29 @@ return {
 					style = "round", fg = "mode"
 				},
 				right = {
-					style = "round", fg = "shade_4"
+					style = "round", fg = "mode"
 				}
 			},
-			fg = "mode",
-			bg = "shade_4",
+			fg = "#111111",
+			bg = "mode",
 			bold = true
 		},
 		file = {
 			icon = {
-				fg = "#111111",
-				bg = "shade_9"
+				-- fg = "#111111",
+				bg = "shade_3"
 			},
 			border = {
 				left = {
 					style = "round",
-					fg = "shade_9"
+					fg = "shade_3"
 				},
 				right = {
 					style = "round",
-					fg = "shade_2"
+					fg = "shade_3"
 				}
 			},
-			bg = "shade_2"
+			bg = "shade_3"
 		},
 		cwd = {
 			icon = {
