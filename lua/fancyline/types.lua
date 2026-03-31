@@ -30,6 +30,7 @@
 ---@field style? string Border style: "round", "square", "slanted", "arrow", "tagged", "none" (default: varies by component)
 ---@field fg? string Foreground color override (hex or theme color reference)
 ---@field bg? string Background color override (hex or theme color reference)
+---@field bold? boolean Enable bold text only (not icon or border) (default: false)
 ---@field border? FancylineBorder Custom border per side
 
 ---@class FancylineModeText
@@ -226,7 +227,7 @@
 ---@field oil? boolean Enable Oil.nvim statusline extension
 
 ---@class FancylineConfig
----@field preset? string Preset name: "default", "minimal", "standard", "full", "git-focused", "vscode", "slim", "rounded", "angular", "diagonal", "arrows", "pill"
+---@field preset? string Preset name: "default", "minimal", "standard", "full", "git-focused", "vscode", "slim", "rounded", "angular", "diagonal", "arrows", "pill", "brick"
 ---@field sections? FancylineSections Statusline sections layout
 ---@field components? FancylineComponents Per-component configuration
 ---@field style? FancylineStyles Border style definitions (extends defaults)
@@ -246,6 +247,7 @@
 ---@field highlight? string Highlight group name
 ---@field fg? string Foreground color
 ---@field bg? string Background color
+---@field bold? boolean Bold styling for text content only
 ---@field state? string Component state for dynamic coloring
 ---@field border? FancylineBorder Custom border configuration
 

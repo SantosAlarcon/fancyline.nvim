@@ -336,7 +336,7 @@ function M.apply(theme)
   end
 
   -- Apply StatusLine background based on theme setting
-  local statusline_opts = { bold = false }
+  local statusline_opts = {}
   if theme.background == "auto" then
     local bg = get_colorscheme_background()
     statusline_opts.bg = bg or "NONE"

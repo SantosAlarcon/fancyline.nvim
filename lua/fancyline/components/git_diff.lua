@@ -23,6 +23,7 @@ function M.provider(opts, ctx)
       text = " " .. counts.added,
       highlight = "FancylineGitAdded",
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -31,6 +32,7 @@ function M.provider(opts, ctx)
       text = " " .. counts.changed,
       highlight = "FancylineGitChanged",
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -39,6 +41,7 @@ function M.provider(opts, ctx)
       text = " " .. counts.untracked,
       highlight = "FancylineGitUntracked",
       style = "none",
+      bold = opts.bold,
     })
   end
 

@@ -40,6 +40,7 @@ function M.provider(opts, ctx)
     highlight = "FancylineQuickfix",
     fg = opts.fg,
     bg = opts.bg,
+    bold = opts.bold,
     border = opts.border,
   }
 end

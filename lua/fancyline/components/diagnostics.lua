@@ -42,6 +42,7 @@ function M.provider(opts, ctx)
       highlight = DIAG_STATES.error.hl,
       fg = DIAG_STATES.error.fg,
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -52,6 +53,7 @@ function M.provider(opts, ctx)
       highlight = DIAG_STATES.warn.hl,
       fg = DIAG_STATES.warn.fg,
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -62,6 +64,7 @@ function M.provider(opts, ctx)
       highlight = DIAG_STATES.info.hl,
       fg = DIAG_STATES.info.fg,
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -72,6 +75,7 @@ function M.provider(opts, ctx)
       highlight = DIAG_STATES.hint.hl,
       fg = DIAG_STATES.hint.fg,
       style = "none",
+      bold = opts.bold,
     })
   end
 

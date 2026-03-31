@@ -25,6 +25,9 @@ function M.provider(opts, ctx)
     highlight = DIAG_STATE.hl,
     fg = DIAG_STATE.fg,
     style = opts.style or "none",
+    fg = opts.fg,
+    bg = opts.bg,
+    bold = opts.bold,
   }
 end
 

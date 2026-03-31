@@ -46,6 +46,7 @@ function M.provider(opts, ctx)
     state = "clean",
     fg = fg,
     bg = bg,
+    bold = opts.bold,
     border = border,
   }
 end

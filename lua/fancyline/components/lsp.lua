@@ -35,6 +35,7 @@ function M.provider(opts, ctx)
     state = #servers > 0 and "connected" or "disconnected",
     fg = opts.fg,
     bg = opts.bg,
+    bold = opts.bold,
     border = opts.border,
   }
 end

@@ -15,10 +15,10 @@ return {
 			},
 			border = {
 				left = {
-					style = "round", fg = "mode"
+					style = "square", fg = "mode"
 				},
 				right = {
-					style = "round", fg = "shade_4"
+					style = "square", fg = "shade_4"
 				}
 			},
 			fg = "mode",
@@ -32,11 +32,11 @@ return {
 			},
 			border = {
 				left = {
-					style = "round",
+					style = "square",
 					fg = "shade_9"
 				},
 				right = {
-					style = "round",
+					style = "square",
 					fg = "shade_2"
 				}
 			},
@@ -50,11 +50,11 @@ return {
 			},
 			border = {
 				left = {
-					style = "round",
+					style = "square",
 					fg = "shade_9"
 				},
 				right = {
-					style = "round",
+					style = "square",
 					fg = "shade_2"
 				}
 			},
@@ -68,11 +68,11 @@ return {
 			},
 			border = {
 				left = {
-					style = "round",
+					style = "square",
 					fg = "shade_9"
 				},
 				right = {
-					style = "round",
+					style = "square",
 					fg = "shade_2"
 				}
 			},
@@ -88,8 +88,8 @@ return {
 				bg = "shade_10"
 			},
 			border = {
-				left = { style = "round", fg = "shade_10" },
-				right = { style = "round", fg = "shade_2" },
+				left = { style = "square", fg = "shade_10" },
+				right = { style = "square", fg = "shade_2" },
 			},
 			bg = "shade_2"
 		},
@@ -99,8 +99,8 @@ return {
 				bg = "shade_10"
 			},
 			border = {
-				left = { style = "round", fg = "shade_10" },
-				right = { style = "round", fg = "shade_2" },
+				left = { style = "square", fg = "shade_10" },
+				right = { style = "square", fg = "shade_2" },
 			},
 			bg = "shade_2"
 		},
@@ -112,8 +112,8 @@ return {
 				bg = "shade_10"
 			},
 			border = {
-				left = { style = "round", fg = "shade_10" },
-				right = { style = "round", fg = "shade_2" },
+				left = { style = "square", fg = "shade_10" },
+				right = { style = "square", fg = "shade_2" },
 			},
 			bg = "shade_2"
 		}

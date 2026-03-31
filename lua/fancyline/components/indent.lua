@@ -32,6 +32,9 @@ function M.provider(opts, ctx)
 		text = icon .. " " .. text,
 		highlight = "FancylineIndent",
 		style = opts.style or "none",
+		fg = opts.fg,
+		bg = opts.bg,
+		bold = opts.bold,
 	}
 end
 

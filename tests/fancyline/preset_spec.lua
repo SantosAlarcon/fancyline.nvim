@@ -128,8 +128,88 @@ describe("fancyline.presets", function()
     end)
   end)
 
+  describe("brick preset structure", function()
+    it("loads brick preset", function()
+      local preset = presets.load("brick")
+      assert.is_not_nil(preset)
+      assert.is_table(preset.sections)
+      assert.is_table(preset.components)
+    end)
+
+    it("has correct sections.left", function()
+      local preset = presets.load("brick")
+      local left = preset.sections.left
+      assert.is_true(vim.tbl_contains(left, "mode"))
+      assert.is_true(vim.tbl_contains(left, "file"))
+      assert.is_true(vim.tbl_contains(left, "git_branch"))
+      assert.is_true(vim.tbl_contains(left, "git_diff"))
+    end)
+
+    it("has correct sections.right", function()
+      local preset = presets.load("brick")
+      local right = preset.sections.right
+      assert.is_true(vim.tbl_contains(right, "encoding"))
+      assert.is_true(vim.tbl_contains(right, "errors"))
+      assert.is_true(vim.tbl_contains(right, "warnings"))
+      assert.is_true(vim.tbl_contains(right, "infos"))
+      assert.is_true(vim.tbl_contains(right, "hints"))
+      assert.is_true(vim.tbl_contains(right, "lsp"))
+      assert.is_true(vim.tbl_contains(right, "position"))
+    end)
+
+    it("has empty separator", function()
+      local preset = presets.load("brick")
+      assert.equals("", preset.separator)
+    end)
+
+    it("has mode with bold enabled", function()
+      local preset = presets.load("brick")
+      assert.is_true(preset.components.mode.bold)
+      assert.equals("mode", preset.components.mode.fg)
+      assert.equals("shade_4", preset.components.mode.bg)
+    end)
+
+    it("has square borders on mode", function()
+      local preset = presets.load("brick")
+      assert.equals("square", preset.components.mode.border.left.style)
+      assert.equals("square", preset.components.mode.border.right.style)
+    end)
+
+    it("has file with shade backgrounds", function()
+      local preset = presets.load("brick")
+      assert.equals("shade_2", preset.components.file.bg)
+      assert.equals("square", preset.components.file.border.left.style)
+      assert.equals("square", preset.components.file.border.right.style)
+    end)
+
+    it("has cwd component", function()
+      local preset = presets.load("brick")
+      assert.is_table(preset.components.cwd)
+      assert.equals("shade_2", preset.components.cwd.bg)
+    end)
+
+    it("has project component", function()
+      local preset = presets.load("brick")
+      assert.is_table(preset.components.project)
+      assert.equals("shade_2", preset.components.project.bg)
+    end)
+
+    it("has lsp component with square borders", function()
+      local preset = presets.load("brick")
+      assert.is_table(preset.components.lsp)
+      assert.equals("shade_2", preset.components.lsp.bg)
+      assert.equals("square", preset.components.lsp.border.left.style)
+    end)
+
+    it("has position with custom format", function()
+      local preset = presets.load("brick")
+      assert.equals("%l/%c", preset.components.position.format)
+      assert.equals("shade_2", preset.components.position.bg)
+    end)
+  end)
+
   describe("all presets have required structure", function()
-    local preset_names = { "minimal", "default", "standard", "full", "git-focused", "vscode", "slim" }
+    local preset_names = { "minimal", "default", "standard", "full", "git-focused", "vscode", "slim", "brick" }
 
     for _, name in ipairs(preset_names) do
       it(name .. " has sections", function()

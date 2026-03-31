@@ -48,6 +48,7 @@ function M.provider(opts, ctx)
       text = icon_added,
       highlight = "FancylineGitAdded",
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -56,6 +57,7 @@ function M.provider(opts, ctx)
       text = icon_changed,
       highlight = "FancylineGitChanged",
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -64,6 +66,7 @@ function M.provider(opts, ctx)
       text = icon_deleted,
       highlight = "FancylineGitDeleted",
       style = "none",
+      bold = opts.bold,
     })
   end
 

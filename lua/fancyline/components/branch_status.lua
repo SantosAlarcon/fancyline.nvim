@@ -25,6 +25,7 @@ function M.provider(opts, ctx)
       text = icon .. ahead,
       highlight = "FancylineGitAhead",
       style = "none",
+      bold = opts.bold,
     })
   end
 
@@ -34,6 +35,7 @@ function M.provider(opts, ctx)
       text = icon .. behind,
       highlight = "FancylineGitBehind",
       style = "none",
+      bold = opts.bold,
     })
   end
 

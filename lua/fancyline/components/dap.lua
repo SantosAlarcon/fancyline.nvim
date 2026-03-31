@@ -60,6 +60,7 @@ function M.provider(opts, ctx)
     highlight = highlight,
     fg = opts.fg,
     bg = opts.bg,
+    bold = opts.bold,
     border = opts.border,
   }
 end

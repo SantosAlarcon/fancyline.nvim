@@ -88,6 +88,7 @@ function M._format_clients(clients, opts)
     highlight = "FancylineLspClients",
     fg = opts.fg,
     bg = opts.bg,
+    bold = opts.bold,
     border = opts.border,
   }
 end

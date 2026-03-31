@@ -44,6 +44,7 @@ function M.provider(opts, ctx)
     highlight = "FancylineChecktime",
     fg = opts.fg,
     bg = opts.bg,
+    bold = opts.bold,
     border = opts.border,
   }
 end

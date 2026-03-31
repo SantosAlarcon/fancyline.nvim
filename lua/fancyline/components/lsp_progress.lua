@@ -49,6 +49,9 @@ function M.provider(opts, ctx)
     text = text,
     highlight = "FancylineLspProgress",
     style = opts.style or "default",
+    fg = opts.fg,
+    bg = opts.bg,
+    bold = opts.bold,
     state = "n",
   }
 end

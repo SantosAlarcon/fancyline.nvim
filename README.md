@@ -71,7 +71,7 @@ require("fancyline").setup()
 
 ```lua
 require("fancyline").setup({
-  preset = "default",  -- or "minimal", "standard", "full", "git-focused", "vscode", "slim", "pill"
+  preset = "default",  -- or "minimal", "standard", "full", "git-focused", "vscode", "slim", "pill", "brick"
 })
 ```
 
@@ -91,6 +91,7 @@ Available presets:
 | `diagonal` | With slanted borders |
 | `arrows` | With arrow borders |
 | `pill` | With rounded borders in both sides |
+| `brick` | With rectangle borders in both sides |
 
 ### Themes
 
@@ -170,6 +171,23 @@ Colors can reference theme values:
 
 - `"mode"` - Current Vim mode color
 - `"shade_X"` - Theme shade (1-10, dark to light)
+
+### Text Styling
+
+Add bold text to any component:
+
+```lua
+require("fancyline").setup({
+  components = {
+    mode = {
+      icon = "neovim",
+      bold = true,  -- Bold text only (not icon or border)
+    }
+  }
+})
+```
+
+Note: Bold styling only applies to the text content, not the icon or border.
 
 ## Components Reference
 
