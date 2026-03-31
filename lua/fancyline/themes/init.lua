@@ -329,11 +329,17 @@ function M.apply(theme)
     { "FancylineFiletype", theme.filetype },
     { "FancylineCursor", theme.cursor },
     { "FancylineSeparator", theme.separator },
-    { "FancylineBorder", theme.border },
   }
   for _, o in ipairs(other_mappings) do
     set_hl(o[1], { fg = o[2], bg = "NONE", bold = false })
   end
+  
+  -- Set FancylineBorder separately with bg
+  set_hl("FancylineBorder", { 
+    fg = theme.border or "#5c6370", 
+    bg = theme.background == "transparent" and "NONE" or (theme.background or "NONE"), 
+    bold = false 
+  })
 
   -- Apply StatusLine background based on theme setting
   local statusline_opts = {}

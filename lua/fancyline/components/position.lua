@@ -10,11 +10,6 @@ function M.provider(opts, ctx)
 
 	local text = format
 	text = text:gsub("%%%%", "%%")
-	text = text:gsub("%%l", "%%l")
-	text = text:gsub("%%c", "%%c")
-	text = text:gsub("%%L", "%%L")
-	text = text:gsub("%%p", "%%p%%")
-	text = text:gsub("%%P", "%%p%%%%")
 
 	local icon_cfg
 	if type(opts.icon) == "table" and opts.icon.symbol then

@@ -37,13 +37,14 @@ local current_statusline = ""
 local function load_config(opts)
   local default_config = require("fancyline.config")
 
-  if opts and opts.preset then
-    local presets = require("fancyline.presets")
-    local preset_config = presets.load(opts.preset)
-    config = vim.tbl_deep_extend("force", default_config, preset_config, opts or {})
-  else
-    config = vim.tbl_deep_extend("force", default_config, opts or {})
-  end
+  -- Default to "default" preset if none specified
+  if not opts then opts = {} end
+  if not opts.preset then opts.preset = "default" end
+
+  local presets = require("fancyline.presets")
+  local preset_config = presets.load(opts.preset)
+  
+  config = vim.tbl_deep_extend("force", default_config, preset_config, opts or {})
 
   return config
 end
@@ -344,7 +345,6 @@ function M.refresh()
   if new_status ~= current_statusline then
     current_statusline = new_status
     vim.o.statusline = new_status
-    vim.cmd("redrawstatus")
   end
 end
 
