@@ -246,12 +246,10 @@ local function setup_autocmds()
     group = augroup,
     callback = function()
       local theme = require("fancyline.themes")
-      local theme_name = config.theme
-      local forced_variant = nil
-      if type(theme_name) == "table" and theme_name.name then
-        forced_variant = theme_name.variant
-        theme_name = theme_name.name
-      end
+      -- Use the stored user config instead of re-extracting from config.theme
+      local theme_cfg = _G.fancyline_theme_config or {}
+      local theme_name = theme_cfg.name or "auto"
+      local forced_variant = theme_cfg.variant
       require("fancyline.renderer.border").clear_cache()
       require("fancyline.renderer.border").invalidate_theme_cache()
       theme.apply(theme.get(theme_name, forced_variant))
@@ -301,6 +299,12 @@ function M.setup(opts)
 
   config._theme_name = theme_name
   config._theme_variant = theme_variant
+
+  -- Store user's theme config globally so it can be reused by border.lua and autocmds
+  _G.fancyline_theme_config = {
+    name = theme_name,
+    variant = theme_variant,
+  }
 
   create_highlights(theme_name, theme_variant)
   require("fancyline.renderer.border").pregenerate_highlights()

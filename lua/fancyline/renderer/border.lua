@@ -26,7 +26,9 @@ local cached_shades = nil
 ---Update cached theme data
 local function update_theme_cache()
 	local theme = require("fancyline.themes")
-	local current = theme.get("auto")
+	-- Use user's configured theme instead of auto-detecting
+	local theme_cfg = _G.fancyline_theme_config or {}
+	local current = theme.get(theme_cfg.name or "auto", theme_cfg.variant)
 	cached_theme = current
 	cached_modes = current.modes or {}
 	cached_shades = current.shades or {}
