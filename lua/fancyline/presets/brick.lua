@@ -4,12 +4,12 @@ return {
 	sections = {
 		left = { "mode", "file", "git_branch", "git_diff" },
 		center = {},
-		right = { "encoding", "errors", "warnings", "infos", "hints", "lsp", "position" },
+		right = { "encoding", "errors", "warnings", "infos", "hints", "lsp", "project",  "position" },
 	},
 	components = {
 		mode = {
 			icon = {
-				symbol = "vim",
+				symbol = "neovim",
 				fg = "#111111",
 				bg = "mode"
 			},
@@ -62,7 +62,7 @@ return {
 		},
 		project = {
 			icon = {
-				symbol = " ",
+				symbol = "",
 				fg = "#111111",
 				bg = "shade_9"
 			},
@@ -83,7 +83,7 @@ return {
 		},
 		lsp = {
 			icon = {
-				symbol = "",
+				symbol = " ",
 				fg = "#111111",
 				bg = "shade_10"
 			},
