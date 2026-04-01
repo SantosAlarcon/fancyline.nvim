@@ -18,7 +18,7 @@ function M.provider(opts, ctx)
     return nil
   end
 
-  local icon = opts.icon or "󰀿"
+  local icon = opts.icon or "󰋼"
 
   return {
     text = icon .. " " .. counts.info,

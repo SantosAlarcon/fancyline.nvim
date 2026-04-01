@@ -44,7 +44,6 @@ return {
 		filetype = { icon = "󰘴", style = "square" },
 		position = { icon = "󰁕", format = "Ln %l, Col %c", style = "round" },
 	},
-
 	style = {
 		square = { left = "󰝤", right = "󰝤", icon_gap = " " },
 		round = { left = "", right = "", icon_gap = " " },
@@ -56,8 +55,8 @@ return {
 	separator = " │ ",
 
 	refresh = {
-		enabled = false,
-		interval = 100,
+		enabled = true,
+		interval = 50,
 	},
 
 	highlights = {

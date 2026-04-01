@@ -119,15 +119,15 @@ local function setup_autocmds()
     callback = render_callback,
   })
 
-  -- Debounced CursorMoved (50ms delay to reduce refresh frequency)
-  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 50)
+  -- Debounced CursorMoved (30ms delay to reduce refresh frequency)
+  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 30)
   safe_autocmd("CursorMoved", {
     group = augroup,
     callback = cursor_moved_debounced,
   })
 
-  -- Debounced CursorMovedI (50ms delay for insert mode)
-  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 50)
+  -- Debounced CursorMovedI (30ms delay for insert mode)
+  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 30)
   safe_autocmd("CursorMovedI", {
     group = augroup,
     callback = cursor_moved_i_debounced,
@@ -185,6 +185,7 @@ local function setup_autocmds()
   safe_autocmd("DiagnosticChanged", {
     group = augroup,
     callback = function()
+      require("fancyline.utils.diagnostics").invalidate_all()
       require("fancyline.renderer").invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
       M.refresh()
     end,

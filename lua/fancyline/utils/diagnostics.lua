@@ -1,15 +1,7 @@
 local M = {}
 
----@type table<number, {error: number, warn: number, info: number, hint: number}|nil
-local diag_cache = {}
-
 function M.get_counts(bufnr)
   bufnr = bufnr or 0
-
-  local cached = diag_cache[bufnr]
-  if cached then
-    return cached
-  end
 
   local counts = {
     error = 0,
@@ -20,7 +12,6 @@ function M.get_counts(bufnr)
 
   local ok_diag, diagnostics = pcall(vim.diagnostic.count, bufnr)
   if not ok_diag or not diagnostics then
-    diag_cache[bufnr] = counts
     return counts
   end
 
@@ -29,7 +20,6 @@ function M.get_counts(bufnr)
   counts.info = diagnostics[vim.diagnostic.severity.INFO] or 0
   counts.hint = diagnostics[vim.diagnostic.severity.HINT] or 0
 
-  diag_cache[bufnr] = counts
   return counts
 end
 
@@ -59,15 +49,11 @@ function M.has_diagnostics(bufnr)
 end
 
 function M.invalidate_buf(bufnr)
-  if bufnr then
-    diag_cache[bufnr] = nil
-  else
-    diag_cache = {}
-  end
+  -- No-op: vim.diagnostic.count() handles its own caching
 end
 
 function M.invalidate_all()
-  diag_cache = {}
+  -- No-op: vim.diagnostic.count() handles its own caching
 end
 
 return M
