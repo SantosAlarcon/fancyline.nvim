@@ -154,28 +154,32 @@ local function render_component(name, opts, ctx)
 				result.state,
 				result.bold
 			)
-		elseif border.parse_icon(result.icon).symbol and border.parse_icon(result.icon).symbol ~= "" then
-			item_rendered = border.render_with_icon(
-				result.icon,
-				result.text,
-				result.style or "none",
-				result.highlight,
-				result.fg,
-				result.bg,
-				result.state,
-				result.bold
-			)
 		else
-			item_rendered = border.render_component(
-				result.icon,
-				result.text,
-				result.style or "none",
-				result.highlight,
-				result.fg,
-				result.bg,
-				result.state,
-				result.bold
-			)
+			local icon_parsed = border.parse_icon(result.icon)
+			local has_icon = icon_parsed.symbol and icon_parsed.symbol ~= ""
+			if has_icon then
+				item_rendered = border.render_with_icon(
+					result.icon,
+					result.text,
+					result.style or "none",
+					result.highlight,
+					result.fg,
+					result.bg,
+					result.state,
+					result.bold
+				)
+			else
+				item_rendered = border.render_component(
+					result.icon,
+					result.text,
+					result.style or "none",
+					result.highlight,
+					result.fg,
+					result.bg,
+					result.state,
+					result.bold
+				)
+			end
 		end
 
 		rendered = item_rendered or ""

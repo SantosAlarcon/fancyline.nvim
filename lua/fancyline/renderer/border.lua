@@ -134,26 +134,6 @@ local function resolve_shade_color(color_spec)
 
 	local shade_match = color_spec:match("^shade_(%d+)$")
 	if shade_match then
-		local function resolve_shade_color(color_spec)
-			if type(color_spec) ~= "string" then
-				return color_spec
-			end
-			local shade_match = color_spec:match("^shade_(%d+)$")
-			print("DEBUG resolve_shade_color:", color_spec, "match:", shade_match)
-			if shade_match then
-				if not cached_theme then
-					print("DEBUG: updating cache")
-					update_theme_cache()
-				end
-				print("DEBUG cached_shades:", vim.inspect(cached_shades))
-				local shade_key = "shade_" .. shade_match
-				if cached_shades[shade_key] then
-					print("DEBUG: returning", cached_shades[shade_key])
-					return cached_shades[shade_key]
-				end
-			end
-			return color_spec
-		end
 		if not cached_theme then
 			update_theme_cache()
 		end
