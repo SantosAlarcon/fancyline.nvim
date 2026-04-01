@@ -137,7 +137,7 @@ local function setup_autocmds()
     group = augroup,
     callback = function()
       require("fancyline.utils.diagnostics").invalidate_buf(vim.api.nvim_get_current_buf())
-      require("fancyline.renderer").invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
+      require("fancyline.renderer").invalidate({ "file", "diagnostics", "errors", "warnings", "infos", "hints" })
       M.refresh()
     end,
   })
@@ -338,6 +338,7 @@ function M.refresh()
   if not enabled then
     return
   end
+  
   local new_status = require("fancyline.statusline").render(config)
   if new_status ~= current_statusline then
     current_statusline = new_status

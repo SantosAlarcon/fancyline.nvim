@@ -42,6 +42,7 @@ local UNCACHED_COMPONENTS = {
 	lsp = true,
 	lsp_progress = true,
 	lsp_clients = true,
+	file = true,
 }
 
 ---Load a component module on demand
@@ -73,11 +74,19 @@ end
 ---@type table<string, {rendered: string, ctx_hash: number}|nil>
 local component_cache = {}
 
----Compute a simple hash from context
+---Compute a hash from context including buffer state
 ---@param ctx FancylineContext
 ---@return number
 local function ctx_hash(ctx)
-	return ctx.bufnr + ctx.winid * 1000000
+	local bufname = vim.api.nvim_buf_get_name(ctx.bufnr) or ""
+	local modified = vim.bo[ctx.bufnr].modified and 1 or 0
+	local readonly = vim.bo[ctx.bufnr].readonly and 1 or 0
+	-- Simple hash of buffer name to differentiate buffers with same bufnr
+	local name_hash = 0
+	for i = 1, #bufname do
+		name_hash = (name_hash * 31 + string.byte(bufname, i)) % 2147483647
+	end
+	return ctx.bufnr + ctx.winid * 1000000 + modified * 10000000000 + readonly * 1000000000 + name_hash
 end
 
 ---@param val any
@@ -201,9 +210,47 @@ function M.render(config)
 		right = { "cursor" },
 	}
 
+	-- Check if current window is floating
+	-- In Neovim 0.11, relative is a string like "editor" for floating windows
+	local function is_float_win(win)
+		local cfg = vim.api.nvim_win_get_config(win)
+		if not cfg then return false end
+		local rel = cfg.relative
+		-- If relative is a non-empty string, it's floating
+		if type(rel) == "string" and rel ~= "" then
+			return true
+		end
+		return false
+	end
+
+	local current_win = vim.api.nvim_get_current_win()
+	local win_is_floating = is_float_win(current_win)
+
+	-- If current window is floating, find the last non-floating window
+	local ctx_bufnr
+	local ctx_winid
+	if win_is_floating then
+		-- Find the first non-floating window
+		for _, win in ipairs(vim.api.nvim_list_wins()) do
+			if not is_float_win(win) then
+				ctx_winid = win
+				ctx_bufnr = vim.api.nvim_win_get_buf(win)
+				break
+			end
+		end
+		-- Fallback to current if no non-floating found
+		if not ctx_bufnr then
+			ctx_bufnr = vim.api.nvim_get_current_buf()
+			ctx_winid = current_win
+		end
+	else
+		ctx_bufnr = vim.api.nvim_get_current_buf()
+		ctx_winid = current_win
+	end
+
 	local ctx = {
-		bufnr = vim.api.nvim_get_current_buf(),
-		winid = vim.api.nvim_get_current_win(),
+		bufnr = ctx_bufnr,
+		winid = ctx_winid,
 	}
 
 	local function render_section(section_names)
@@ -259,7 +306,8 @@ function M.render(config)
 		return "%="
 	end
 
-	return table.concat(parts, separator)
+	local result = table.concat(parts, separator)
+	return result
 end
 
 ---Invalidate cache for specific components or all
