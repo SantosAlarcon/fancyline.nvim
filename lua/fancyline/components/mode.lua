@@ -3,54 +3,81 @@ local M = {}
 -- Hoist require to module level for performance
 local theme = require("fancyline.themes")
 
--- Map modes to their highlight group name
+-- Map main modes to their highlight group name
 local mode_highlights = {
 	n = "FancylineModeNormal",
 	i = "FancylineModeInsert",
 	v = "FancylineModeVisual",
-	V = "FancylineModeVisual",
-	["^V"] = "FancylineModeVisual",
 	t = "FancylineModeTerminal",
-	["!"] = "FancylineModeTerminal",
 	c = "FancylineModeCommand",
 	r = "FancylineModeReplace",
-	R = "FancylineModeReplace",
-	rv = "FancylineModeReplace",
 	s = "FancylineModeSelect",
-	S = "FancylineModeSelect",
-	["^S"] = "FancylineModeSelect",
 }
 
--- Map modes to theme colors
+-- Map main modes to theme colors
 local mode_theme_keys = {
 	n = "n",
 	i = "i",
 	v = "v",
-	V = "v",
-	["^V"] = "v",
 	t = "t",
-	["!"] = "t",
 	c = "c",
 	r = "r",
-	R = "r",
-	rv = "r",
 	s = "s",
-	S = "s",
-	["^S"] = "s",
 }
+
+-- Default text for main modes (shown when no custom text is configured)
+local default_mode_text = {
+	n = "N",
+	i = "I",
+	v = "V",
+	t = "T",
+	c = ":",
+	r = "R",
+	s = "S",
+	["\22"] = "V-BLOCK",
+	["\19"] = "S-BLOCK",
+}
+
+-- Normalize mode variants to main modes
+---@param mode string
+---@return string
+local function normalize_mode(mode)
+	-- Main modes (including operator-pending which starts with 'n')
+	if mode == "n" or mode == "i" or mode == "v" or mode == "t" or mode == "c" or mode == "r" or mode == "s" then
+		return mode
+	end
+	-- Operator-pending modes (no*, noc*, nov*, etc.) -> treat as normal
+	if mode:sub(1, 2) == "no" then
+		return "n"
+	end
+	local byte = string.byte(mode)
+	if mode == "V" or byte == 22 then -- 22 = Ctrl-V (Visual Block)
+		return "v"
+	end
+	if mode == "R" or mode == "rv" then
+		return "r"
+	end
+	if mode == "S" or byte == 19 then -- 19 = Ctrl-S (Select)
+		return "s"
+	end
+	if mode == "!" then
+		return "t"
+	end
+	return mode
+end
 
 ---Provider function for the mode component.
 ---@param opts? FancylineModeComponent
 ---@param ctx FancylineContext
 ---@return FancylineComponentResult?
 function M.provider(opts, ctx)
-	-- Use faster API instead of vim.fn.mode(1)
-	local mode_info = vim.api.nvim_get_mode()
-	local current_mode = mode_info and mode_info.mode or vim.fn.mode(1)
+	-- Get raw mode string (vim.fn.mode(1) returns "^V" for visual block, etc.)
+	local raw_mode = vim.fn.mode(1)
+	local current_mode = normalize_mode(raw_mode)
 
-	-- If opts is a function, call it with the current mode
+	-- If opts is a function, call it with the raw mode
 	if type(opts) == "function" then
-		local result = opts(current_mode)
+		local result = opts(raw_mode)
 		if result then
 			-- Parse icon if it's a table with symbol
 			local icon_cfg = result.icon
@@ -77,9 +104,9 @@ function M.provider(opts, ctx)
 	-- Original table-based config
 	local mode_map = opts.text or {}
 
-	local text = mode_map[current_mode]
+	local text = mode_map[raw_mode] or mode_map[current_mode]
 	if not text then
-		text = current_mode
+		text = default_mode_text[raw_mode] or default_mode_text[current_mode] or current_mode
 	end
 
 	-- Handle icon special values

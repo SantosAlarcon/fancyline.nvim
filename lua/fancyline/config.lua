@@ -6,6 +6,7 @@ return {
 		right = { "diagnostics", "lsp", "filetype", "position" },
 	},
 
+
 	components = {
 		mode = {
 			icon = "neovim",
@@ -14,7 +15,7 @@ return {
 				i = "INSERT",
 				v = "VISUAL",
 				V = "V-LINE",
-				["^V"] = "V-BLOCK",
+				["\22"] = "V-BLOCK",
 				t = "TERMINAL",
 				["!"] = "TERMINAL",
 				c = "COMMAND",
@@ -23,7 +24,7 @@ return {
 				rv = "V-REPLACE",
 				s = "SELECT",
 				S = "S-LINE",
-				["^S"] = "S-BLOCK",
+				["\19"] = "S-BLOCK",
 			},
 			style = "round",
 			colors = {},

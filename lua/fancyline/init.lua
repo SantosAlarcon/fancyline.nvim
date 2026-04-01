@@ -54,17 +54,10 @@ local mode_highlights = {
   n = "FancylineModeNormal",
   i = "FancylineModeInsert",
   v = "FancylineModeVisual",
-  V = "FancylineModeVisual",
-  ["^V"] = "FancylineModeVisual",
   t = "FancylineModeTerminal",
-  ["!"] = "FancylineModeTerminal",
   c = "FancylineModeCommand",
   r = "FancylineModeReplace",
-  R = "FancylineModeReplace",
-  rv = "FancylineModeReplace",
   s = "FancylineModeSelect",
-  S = "FancylineModeSelect",
-  ["^S"] = "FancylineModeSelect",
 }
 
 local function create_highlights(theme_name, theme_variant)

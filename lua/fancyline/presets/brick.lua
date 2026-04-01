@@ -4,7 +4,7 @@ return {
 	sections = {
 		left = { "mode", "file", "git_branch", "git_diff" },
 		center = {},
-		right = { "encoding", "errors", "warnings", "infos", "hints", "lsp", "project",  "position" },
+		right = { "encoding", "errors", "warnings", "infos", "hints", "lsp", "project", "position" },
 	},
 	components = {
 		mode = {
@@ -23,7 +23,10 @@ return {
 			},
 			fg = "mode",
 			bg = "shade_4",
-			bold = true
+			bold = true,
+			text = {
+				["^V"] = "V-BLOCK"
+			}
 		},
 		file = {
 			icon = {
