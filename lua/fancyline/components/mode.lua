@@ -46,12 +46,16 @@ local function normalize_mode(mode)
 	if mode == "n" or mode == "i" or mode == "v" or mode == "t" or mode == "c" or mode == "r" or mode == "s" then
 		return mode
 	end
-	-- Operator-pending modes (no*, noc*, nov*, ci*, etc.) -> treat as normal or command
+	-- Operator-pending modes (no*, noc*, nov*, ci*, ic*, etc.) -> treat as normal or command
 	if mode:sub(1, 2) == "no" then
 		return "n"
 	end
 	-- Command-line modes (c*, cv, ce, ci, etc.) -> treat as command mode
 	if mode:sub(1, 1) == "c" then
+		return "c"
+	end
+	-- Command-line operator-pending (ic, ix, etc.) -> treat as command mode
+	if mode:sub(1, 1) == "i" and mode ~= "i" then
 		return "c"
 	end
 	local byte = string.byte(mode)
