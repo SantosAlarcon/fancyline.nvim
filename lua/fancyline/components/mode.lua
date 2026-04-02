@@ -54,9 +54,9 @@ local function normalize_mode(mode)
 	if mode:sub(1, 1) == "c" then
 		return "c"
 	end
-	-- Command-line operator-pending (ic, ix, etc.) -> treat as command mode
+	-- Command-line operator-pending (ic, ix, etc.) -> treat as insert mode
 	if mode:sub(1, 1) == "i" and mode ~= "i" then
-		return "c"
+		return "i"
 	end
 	local byte = string.byte(mode)
 	if mode == "V" or byte == 22 then -- 22 = Ctrl-V (Visual Block)
