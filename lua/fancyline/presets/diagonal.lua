@@ -4,7 +4,7 @@ return {
 	sections = {
 		left = { "mode", "file", "git_branch", "git_diff" },
 		center = {},
-		right = { "encoding", "errors", "warnings", "infos", "hints", "lsp", "project", "position" },
+		right = { "encoding", "errors", "warnings", "infos", "hints", "lsp", "project",  "position" },
 	},
 	components = {
 		mode = {
@@ -13,6 +13,7 @@ return {
 				fg = "#111111",
 				bg = "mode"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "slanted", fg = "mode"
@@ -25,11 +26,15 @@ return {
 			bg = "shade_4",
 			bold = true
 		},
+		git_branch = {
+			padding_left = 1
+		},
 		file = {
 			icon = {
 				fg = "#111111",
 				bg = "shade_9"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "slanted",
@@ -48,6 +53,7 @@ return {
 				fg = "#111111",
 				bg = "shade_9"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "slanted",
@@ -66,6 +72,7 @@ return {
 				fg = "#111111",
 				bg = "shade_9"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "slanted",
@@ -79,6 +86,7 @@ return {
 			bg = "shade_2"
 		},
 		encoding = {
+			padding_right = 1,
 			icon = "",
 		},
 		lsp = {
@@ -87,6 +95,7 @@ return {
 				fg = "#111111",
 				bg = "shade_10"
 			},
+			padding_left = 1,
 			border = {
 				left = { style = "slanted", fg = "shade_10" },
 				right = { style = "slanted", fg = "shade_2" },
@@ -98,6 +107,7 @@ return {
 				fg = "#111111",
 				bg = "shade_10"
 			},
+			padding_left = 1,
 			border = {
 				left = { style = "slanted", fg = "shade_10" },
 				right = { style = "slanted", fg = "shade_2" },
@@ -106,6 +116,7 @@ return {
 		},
 		position = {
 			format = "%l/%c",
+			padding_left = 1,
 			icon = {
 				symbol = "",
 				fg = "#111111",

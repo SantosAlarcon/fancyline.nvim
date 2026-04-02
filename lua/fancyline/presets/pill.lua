@@ -13,6 +13,7 @@ return {
 				fg = "#111111",
 				bg = "mode"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "round", fg = "mode"
@@ -25,11 +26,15 @@ return {
 			bg = "shade_4",
 			bold = true
 		},
+		git_branch = {
+			padding_left = 1
+		},
 		file = {
 			icon = {
 				fg = "#111111",
 				bg = "shade_9"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "round",
@@ -67,6 +72,7 @@ return {
 				fg = "#111111",
 				bg = "shade_9"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "round",
@@ -80,6 +86,7 @@ return {
 			bg = "shade_2"
 		},
 		encoding = {
+			padding_right = 1,
 			icon = "",
 		},
 		lsp = {
@@ -88,6 +95,7 @@ return {
 				fg = "#111111",
 				bg = "shade_10"
 			},
+			padding_left = 1,
 			border = {
 				left = { style = "round", fg = "shade_10" },
 				right = { style = "round", fg = "shade_2" },
@@ -99,6 +107,7 @@ return {
 				fg = "#111111",
 				bg = "shade_10"
 			},
+			padding_left = 1,
 			border = {
 				left = { style = "round", fg = "shade_10" },
 				right = { style = "round", fg = "shade_2" },
