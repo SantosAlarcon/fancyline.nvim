@@ -42,13 +42,17 @@ local default_mode_text = {
 ---@param mode string
 ---@return string
 local function normalize_mode(mode)
-	-- Main modes (including operator-pending which starts with 'n')
+	-- Main modes
 	if mode == "n" or mode == "i" or mode == "v" or mode == "t" or mode == "c" or mode == "r" or mode == "s" then
 		return mode
 	end
-	-- Operator-pending modes (no*, noc*, nov*, etc.) -> treat as normal
+	-- Operator-pending modes (no*, noc*, nov*, ci*, etc.) -> treat as normal or command
 	if mode:sub(1, 2) == "no" then
 		return "n"
+	end
+	-- Command-line modes (c*, cv, ce, ci, etc.) -> treat as command mode
+	if mode:sub(1, 1) == "c" then
+		return "c"
 	end
 	local byte = string.byte(mode)
 	if mode == "V" or byte == 22 then -- 22 = Ctrl-V (Visual Block)
