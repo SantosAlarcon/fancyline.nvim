@@ -246,8 +246,10 @@ end
 ---@param bg? string
 ---@param state? string
 ---@param text_bold? boolean Bold text only (not icon/border)
+---@param padding_left? number Padding spaces before text
+---@param padding_right? number Padding spaces after text
 ---@return string
-function M.render_component(icon, text, style_name, highlight, fg, bg, state, text_bold)
+function M.render_component(icon, text, style_name, highlight, fg, bg, state, text_bold, padding_left, padding_right)
 	local style = M.get_style(style_name)
 	local base_hl = highlight or "FancylineComponent"
 
@@ -262,9 +264,18 @@ function M.render_component(icon, text, style_name, highlight, fg, bg, state, te
 	if style_name == "none" then
 		local parts = {}
 		if text and text ~= "" then
-			table.insert(parts, hl_prefix .. text)
+			-- Text with padding
+			table.insert(parts, hl_prefix)
+			table.insert(parts, string.rep(" ", padding_left or 0))
+			table.insert(parts, text)
+			table.insert(parts, string.rep(" ", padding_right or 0))
+			table.insert(parts, "%#FancylineReset#")
+		elseif (padding_left or 0) > 0 or (padding_right or 0) > 0 then
+			table.insert(parts, hl_prefix)
+			table.insert(parts, string.rep(" ", (padding_left or 0) + (padding_right or 0)))
+			table.insert(parts, "%#FancylineReset#")
 		end
-		return table.concat(parts, " ") .. "%#FancylineReset#"
+		return table.concat(parts, "")
 	end
 
 	-- Create border highlight with bg if specified
@@ -276,12 +287,14 @@ function M.render_component(icon, text, style_name, highlight, fg, bg, state, te
 	local parts = {
 		border_hl .. style.left,
 		hl_prefix,
+		string.rep(" ", padding_left or 0),
 	}
 
 	if text and text ~= "" then
 		table.insert(parts, text)
 	end
 
+	table.insert(parts, string.rep(" ", padding_right or 0))
 	table.insert(parts, border_hl .. style.right .. "%#FancylineReset#")
 
 	return table.concat(parts, "")
@@ -296,8 +309,10 @@ end
 ---@param text_bg? string
 ---@param state? string
 ---@param text_bold? boolean Bold text only (not icon)
+---@param padding_left? number Padding spaces before text (after icon gap)
+---@param padding_right? number Padding spaces after text
 ---@return string
-function M.render_with_icon(icon_cfg, text, style_name, highlight, text_fg, text_bg, state, text_bold)
+function M.render_with_icon(icon_cfg, text, style_name, highlight, text_fg, text_bg, state, text_bold, padding_left, padding_right)
 	local style = M.get_style(style_name)
 
 	-- Parse icon config
@@ -339,23 +354,36 @@ function M.render_with_icon(icon_cfg, text, style_name, highlight, text_fg, text
 		table.insert(parts, border_hl .. style.left)
 		table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol)
 		table.insert(parts, border_hl .. style.right)
-		table.insert(parts, style.icon_gap)
 		if text and text ~= "" then
-			table.insert(parts, "%#" .. text_hl .. "#" .. text)
+			-- Text with padding
+			table.insert(parts, "%#" .. text_hl .. "#")
+			table.insert(parts, string.rep(" ", padding_left or 0))
+			table.insert(parts, text)
+			table.insert(parts, string.rep(" ", padding_right or 0))
+			table.insert(parts, "%#FancylineReset#")
+		elseif (padding_left or 0) > 0 or (padding_right or 0) > 0 then
+			table.insert(parts, "%#" .. text_hl .. "#")
+			table.insert(parts, string.rep(" ", (padding_left or 0) + (padding_right or 0)))
+			table.insert(parts, "%#FancylineReset#")
 		end
-		table.insert(parts, "%#FancylineReset#")
 		return table.concat(parts, "")
 	end
 
 	-- None style: no borders, just icon and text with spacing
 	if style_name == "none" then
 		if icon_data.symbol and icon_data.symbol ~= "" then
-			table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol .. style.icon_gap)
+			table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol)
 		end
 		if text and text ~= "" then
-			table.insert(parts, "%#" .. text_hl .. "#" .. text)
-		end
-		if #parts > 0 then
+			-- Text with padding
+			table.insert(parts, "%#" .. text_hl .. "#")
+			table.insert(parts, string.rep(" ", padding_left or 0))
+			table.insert(parts, text)
+			table.insert(parts, string.rep(" ", padding_right or 0))
+			table.insert(parts, "%#FancylineReset#")
+		elseif (padding_left or 0) > 0 or (padding_right or 0) > 0 then
+			table.insert(parts, "%#" .. text_hl .. "#")
+			table.insert(parts, string.rep(" ", (padding_left or 0) + (padding_right or 0)))
 			table.insert(parts, "%#FancylineReset#")
 		end
 		return table.concat(parts, "")
@@ -366,12 +394,21 @@ function M.render_with_icon(icon_cfg, text, style_name, highlight, text_fg, text
 
 	-- Icon (rendered separately with its own color)
 	if icon_data.symbol and icon_data.symbol ~= "" then
-		table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol .. style.icon_gap)
+		table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol)
 	end
 
-	-- Text
+	-- Text with padding
 	if text and text ~= "" then
-		table.insert(parts, "%#" .. text_hl .. "#" .. text)
+		table.insert(parts, "%#" .. text_hl .. "#")
+		table.insert(parts, string.rep(" ", padding_left or 0))
+		table.insert(parts, text)
+		table.insert(parts, string.rep(" ", padding_right or 0))
+		table.insert(parts, "%#FancylineReset#")
+	elseif (padding_left or 0) > 0 or (padding_right or 0) > 0 then
+		-- Padding without text
+		table.insert(parts, "%#" .. text_hl .. "#")
+		table.insert(parts, string.rep(" ", (padding_left or 0) + (padding_right or 0)))
+		table.insert(parts, "%#FancylineReset#")
 	end
 
 	-- Border end
@@ -408,8 +445,10 @@ end
 ---@param bg? string
 ---@param state? string
 ---@param text_bold? boolean Bold text only (not icon/border)
+---@param padding_left? number Padding spaces before text (after icon gap)
+---@param padding_right? number Padding spaces after text
 ---@return string
-function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, state, text_bold)
+function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, state, text_bold, padding_left, padding_right)
 	local theme = require("fancyline.themes")
 	local default_border = theme.get_default().border or "#5c6370"
 
@@ -461,12 +500,24 @@ function M.render_custom_border(border_cfg, icon_cfg, text, highlight, fg, bg, s
 
 	-- Icon
 	if icon_data.symbol and icon_data.symbol ~= "" then
-		table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol .. content_gap)
+		table.insert(parts, "%#" .. icon_hl .. "#" .. icon_data.symbol)
 	end
 
-	-- Text
+	-- Padding after icon (before text)
+	table.insert(parts, string.rep(" ", padding_left or 0))
+
+	-- Text with padding
 	if text and text ~= "" then
-		table.insert(parts, "%#" .. content_hl .. "#" .. text)
+		table.insert(parts, "%#" .. content_hl .. "#")
+		table.insert(parts, string.rep(" ", padding_left or 0))
+		table.insert(parts, text)
+		table.insert(parts, string.rep(" ", padding_right or 0))
+		table.insert(parts, "%#FancylineReset#")
+	elseif (padding_left or 0) > 0 or (padding_right or 0) > 0 then
+		-- Padding without text
+		table.insert(parts, "%#" .. content_hl .. "#")
+		table.insert(parts, string.rep(" ", (padding_left or 0) + (padding_right or 0)))
+		table.insert(parts, "%#FancylineReset#")
 	end
 
 	-- Right border

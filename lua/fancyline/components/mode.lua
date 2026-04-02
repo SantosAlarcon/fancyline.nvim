@@ -164,7 +164,7 @@ function M.provider(opts, ctx)
 	local bg = opts.bg
 
 	return {
-		text = " " .. text,
+		text = text,
 		icon = icon_cfg,
 		style = opts.style or "round",
 		highlight = highlight,

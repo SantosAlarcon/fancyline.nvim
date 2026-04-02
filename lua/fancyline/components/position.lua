@@ -19,7 +19,7 @@ function M.provider(opts, ctx)
 	end
 
 	return {
-		text = " " .. text,
+		text = text,
 		icon = icon_cfg,
 		style = opts.style or "none",
 		highlight = "FancylinePosition",

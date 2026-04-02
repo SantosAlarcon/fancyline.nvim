@@ -131,6 +131,10 @@ local function render_component(name, opts, ctx)
 
 	local rendered = ""
 
+	-- Get padding from component options
+	local padding_left = comp_opts.padding_left or 0
+	local padding_right = comp_opts.padding_right or 0
+
 	if is_array(result) then
 		local parts = {}
 		for _, item in ipairs(result) do
@@ -142,7 +146,9 @@ local function render_component(name, opts, ctx)
 				item.fg,
 				item.bg,
 				item.state,
-				item.bold
+				item.bold,
+				padding_left,
+				padding_right
 			)
 			if item_rendered and item_rendered ~= "" then
 				table.insert(parts, item_rendered)
@@ -161,7 +167,9 @@ local function render_component(name, opts, ctx)
 				result.fg,
 				result.bg,
 				result.state,
-				result.bold
+				result.bold,
+				padding_left,
+				padding_right
 			)
 		else
 			local icon_parsed = border.parse_icon(result.icon)
@@ -175,7 +183,9 @@ local function render_component(name, opts, ctx)
 					result.fg,
 					result.bg,
 					result.state,
-					result.bold
+					result.bold,
+					padding_left,
+					padding_right
 				)
 			else
 				item_rendered = border.render_component(
@@ -186,7 +196,9 @@ local function render_component(name, opts, ctx)
 					result.fg,
 					result.bg,
 					result.state,
-					result.bold
+					result.bold,
+					padding_left,
+					padding_right
 				)
 			end
 		end

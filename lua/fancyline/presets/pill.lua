@@ -48,6 +48,7 @@ return {
 				fg = "#111111",
 				bg = "shade_9"
 			},
+			padding_left = 1,
 			border = {
 				left = {
 					style = "round",
@@ -106,6 +107,7 @@ return {
 		},
 		position = {
 			format = "%l/%c",
+			padding_left = 1,
 			icon = {
 				symbol = "",
 				fg = "#111111",

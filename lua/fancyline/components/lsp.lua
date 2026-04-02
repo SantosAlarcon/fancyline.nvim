@@ -28,7 +28,7 @@ function M.provider(opts, ctx)
   end
 
   return {
-    text = " " .. table.concat(servers, ", "),
+    text = table.concat(servers, ", "),
     icon = icon_cfg,
     style = opts.style or "round",
     highlight = "FancylineLsp",

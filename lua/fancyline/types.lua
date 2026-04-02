@@ -32,6 +32,8 @@
 ---@field bg? string Background color override (hex or theme color reference)
 ---@field bold? boolean Enable bold text only (not icon or border) (default: false)
 ---@field border? FancylineBorder Custom border per side
+---@field padding_left? number Number of spaces before content (default: 1)
+---@field padding_right? number Number of spaces after content (default: 0)
 
 ---@class FancylineModeText
 ---@field [key: string] string Mode display text

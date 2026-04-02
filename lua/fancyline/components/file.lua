@@ -74,7 +74,7 @@ function M.provider(opts, ctx)
 	end
 
 	return {
-		text = " " .. display_name,
+		text = display_name,
 		icon = icon_cfg,
 		style = opts.style or "square",
 		highlight = state_highlight,
