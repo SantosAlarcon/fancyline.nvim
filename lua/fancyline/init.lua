@@ -128,15 +128,15 @@ local function setup_autocmds()
     callback = render_callback,
   })
 
-  -- Debounced CursorMoved (50ms delay - responsive but not too aggressive)
-  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 50)
+  -- Debounced CursorMoved (100ms - balance between responsiveness and performance)
+  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 100)
   safe_autocmd("CursorMoved", {
     group = augroup,
     callback = cursor_moved_debounced,
   })
 
-  -- Debounced CursorMovedI (50ms delay for insert mode)
-  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 50)
+  -- Debounced CursorMovedI (100ms for insert mode)
+  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 100)
   safe_autocmd("CursorMovedI", {
     group = augroup,
     callback = cursor_moved_i_debounced,

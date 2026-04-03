@@ -2,7 +2,9 @@ local M = {}
 
 local cache = require("fancyline.utils.cache")
 
-local GIT_CACHE_TTL = 2000
+-- Longer cache TTL to avoid spawning shell processes on every render
+-- 30 seconds instead of 2 seconds - acceptable staleness for git info
+local GIT_CACHE_TTL = 30000
 
 function M.get_root()
   local cached = cache.get("git_root")

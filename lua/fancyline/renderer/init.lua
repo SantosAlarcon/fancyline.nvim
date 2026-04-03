@@ -24,25 +24,12 @@ local COMPONENT_NAMES = {
 }
 
 ---Components that should never be cached (always re-render)
+--- Only components that change on EVERY cursor move should be here
 ---@type table<string, true>
 local UNCACHED_COMPONENTS = {
 	position = true,
-	macro_recording = true,
-	search_stats = true,
 	mode = true,
-	diagnostics = true,
-	errors = true,
-	warnings = true,
-	infos = true,
-	hints = true,
-	git_diff = true,
-	git_branch = true,
-	git_signs = true,
-	branch_status = true,
-	lsp = true,
-	lsp_progress = true,
-	lsp_clients = true,
-	file = true,
+	-- All other components are now cached and invalidated via autocmds
 }
 
 ---Load a component module on demand
