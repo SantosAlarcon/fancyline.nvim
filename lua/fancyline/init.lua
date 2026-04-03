@@ -286,6 +286,7 @@ end
 ---Setup Fancyline with the given options.
 ---@param opts? FancylineConfig
 function M.setup(opts)
+  -- Load config immediately (fast)
   config = load_config(opts)
 
   local theme = require("fancyline.themes")
@@ -310,22 +311,26 @@ function M.setup(opts)
   }
 
   create_highlights(theme_name, theme_variant)
-  require("fancyline.renderer.border").pregenerate_highlights()
-  setup_autocmds()
-  setup_refresh_timer()
 
-  -- Cache module references for performance (avoids require() in autocmds)
-  _cached.git = require("fancyline.utils.git")
-  _cached.diagnostics = require("fancyline.utils.diagnostics")
-  _cached.renderer = require("fancyline.renderer")
-  _cached.lsp = require("fancyline.utils.lsp")
+  -- Defer remaining setup to avoid blocking UI
+  vim.schedule(function()
+    require("fancyline.renderer.border").pregenerate_highlights()
+    setup_autocmds()
+    setup_refresh_timer()
 
-  if config.extensions then
-    require("fancyline.extensions").setup(config.extensions)
-  end
+    -- Cache module references for performance (avoids require() in autocmds)
+    _cached.git = require("fancyline.utils.git")
+    _cached.diagnostics = require("fancyline.utils.diagnostics")
+    _cached.renderer = require("fancyline.renderer")
+    _cached.lsp = require("fancyline.utils.lsp")
 
-  enabled = true
-  M.refresh()
+    if config.extensions then
+      require("fancyline.extensions").setup(config.extensions)
+    end
+
+    enabled = true
+    M.refresh()
+  end)
 end
 
 function M.render()
