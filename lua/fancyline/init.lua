@@ -128,15 +128,21 @@ local function setup_autocmds()
     callback = render_callback,
   })
 
-  -- Debounced CursorMoved (100ms - balance between responsiveness and performance)
-  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 100)
+  -- CursorMoved - ONLY invalidate position, DO NOT re-render
+  -- Rendering on every cursor move is the main performance killer
+  local cursor_moved_debounced = debounced_refresh(function()
+    -- Only invalidate position cache, don't re-render
+    _cached.renderer.invalidate({ "position" })
+  end, "cursor_moved", 100)
   safe_autocmd("CursorMoved", {
     group = augroup,
     callback = cursor_moved_debounced,
   })
 
-  -- Debounced CursorMovedI (100ms for insert mode)
-  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 100)
+  -- CursorMovedI - ONLY invalidate position, DO NOT re-render
+  local cursor_moved_i_debounced = debounced_refresh(function()
+    _cached.renderer.invalidate({ "position" })
+  end, "cursor_moved_i", 100)
   safe_autocmd("CursorMovedI", {
     group = augroup,
     callback = cursor_moved_i_debounced,
