@@ -6,8 +6,5 @@ local function add_helptags()
 end
 add_helptags()
 
--- Defer loading to avoid blocking Neovim startup
--- The actual require will happen on first statusline render
-vim.defer_fn(function()
-  require("fancyline")
-end, 0)
+-- Don't load fancyline at startup - it will be loaded by lazy.nvim config
+-- This keeps startup fast, the plugin loads only when statusline is rendered
