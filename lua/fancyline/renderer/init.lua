@@ -78,15 +78,9 @@ local component_cache = {}
 ---@param ctx FancylineContext
 ---@return number
 local function ctx_hash(ctx)
-	local bufname = vim.api.nvim_buf_get_name(ctx.bufnr) or ""
-	local modified = vim.bo[ctx.bufnr].modified and 1 or 0
-	local readonly = vim.bo[ctx.bufnr].readonly and 1 or 0
-	-- Simple hash of buffer name to differentiate buffers with same bufnr
-	local name_hash = 0
-	for i = 1, #bufname do
-		name_hash = (name_hash * 31 + string.byte(bufname, i)) % 2147483647
-	end
-	return ctx.bufnr + ctx.winid * 1000000 + modified * 10000000000 + readonly * 1000000000 + name_hash
+	-- Simple hash using bufnr and winid - sufficient for unique identification
+	-- The buffer name hash is unnecessary since bufnr is unique per buffer
+	return ctx.bufnr + ctx.winid * 1000000
 end
 
 ---@param val any

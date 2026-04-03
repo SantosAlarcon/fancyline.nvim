@@ -34,6 +34,15 @@ end
 ---@type string
 local current_statusline = ""
 
+-- Cached module references for performance (avoids require() in autocmds)
+---@type table<string, any>
+local _cached = {
+  git = nil,
+  diagnostics = nil,
+  renderer = nil,
+  lsp = nil,
+}
+
 local function load_config(opts)
   local default_config = require("fancyline.config")
 
@@ -98,9 +107,9 @@ local function setup_autocmds()
   safe_autocmd("BufEnter", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.git").invalidate()
-      require("fancyline.utils.diagnostics").invalidate_buf(vim.api.nvim_get_current_buf())
-      require("fancyline.renderer").invalidate({ "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.git.invalidate()
+      _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
+      _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
       render_callback()
     end,
   })
@@ -108,8 +117,8 @@ local function setup_autocmds()
   safe_autocmd("WinEnter", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.git").invalidate()
-      require("fancyline.renderer").invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
+      _cached.git.invalidate()
+      _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
       render_callback()
     end,
   })
@@ -119,15 +128,15 @@ local function setup_autocmds()
     callback = render_callback,
   })
 
-  -- Debounced CursorMoved (30ms delay to reduce refresh frequency)
-  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 30)
+  -- Debounced CursorMoved (100ms delay for better performance)
+  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 100)
   safe_autocmd("CursorMoved", {
     group = augroup,
     callback = cursor_moved_debounced,
   })
 
-  -- Debounced CursorMovedI (30ms delay for insert mode)
-  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 30)
+  -- Debounced CursorMovedI (100ms delay for insert mode)
+  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 100)
   safe_autocmd("CursorMovedI", {
     group = augroup,
     callback = cursor_moved_i_debounced,
@@ -136,8 +145,8 @@ local function setup_autocmds()
   safe_autocmd("BufWritePost", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.diagnostics").invalidate_buf(vim.api.nvim_get_current_buf())
-      require("fancyline.renderer").invalidate({ "file", "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
+      _cached.renderer.invalidate({ "file", "diagnostics", "errors", "warnings", "infos", "hints" })
       M.refresh()
     end,
   })
@@ -145,8 +154,8 @@ local function setup_autocmds()
   safe_autocmd("TextChangedI", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.diagnostics").invalidate_buf(vim.api.nvim_get_current_buf())
-      require("fancyline.renderer").invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
+      _cached.renderer.invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
       render_callback()
     end,
   })
@@ -154,8 +163,8 @@ local function setup_autocmds()
   safe_autocmd("InsertLeave", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.diagnostics").invalidate_buf(vim.api.nvim_get_current_buf())
-      require("fancyline.renderer").invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
+      _cached.renderer.invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
       render_callback()
     end,
   })
@@ -172,7 +181,7 @@ local function setup_autocmds()
         vim.fn.timer_stop(_debounce_timers.cursor_moved_i)
         _debounce_timers.cursor_moved_i = nil
       end
-      require("fancyline.renderer").invalidate({ "mode" })
+      _cached.renderer.invalidate({ "mode" })
       M.refresh()
     end,
   })
@@ -185,8 +194,8 @@ local function setup_autocmds()
   safe_autocmd("DiagnosticChanged", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.diagnostics").invalidate_all()
-      require("fancyline.renderer").invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.diagnostics.invalidate_all()
+      _cached.renderer.invalidate({ "diagnostics", "errors", "warnings", "infos", "hints" })
       M.refresh()
     end,
   })
@@ -194,7 +203,7 @@ local function setup_autocmds()
   safe_autocmd("LspProgressUpdate", {
     group = augroup,
     callback = function()
-      require("fancyline.renderer").invalidate({ "lsp_progress" })
+      _cached.renderer.invalidate({ "lsp_progress" })
       M.refresh()
     end,
   })
@@ -202,8 +211,8 @@ local function setup_autocmds()
   safe_autocmd("GitSignsUpdate", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.git").invalidate()
-      require("fancyline.renderer").invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
+      _cached.git.invalidate()
+      _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
       M.refresh()
     end,
   })
@@ -212,8 +221,8 @@ local function setup_autocmds()
     pattern = "GitSignsRefreshed",
     group = augroup,
     callback = function()
-      require("fancyline.utils.git").invalidate()
-      require("fancyline.renderer").invalidate({ "git_diff", "git_signs" })
+      _cached.git.invalidate()
+      _cached.renderer.invalidate({ "git_diff", "git_signs" })
       M.refresh()
     end,
   })
@@ -221,8 +230,8 @@ local function setup_autocmds()
   safe_autocmd("LspAttach", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.lsp").invalidate_all()
-      require("fancyline.renderer").invalidate({ "lsp", "lsp_progress", "lsp_clients" })
+      _cached.lsp.invalidate_all()
+      _cached.renderer.invalidate({ "lsp", "lsp_progress", "lsp_clients" })
       M.refresh()
     end,
   })
@@ -230,8 +239,8 @@ local function setup_autocmds()
   safe_autocmd("LspDetach", {
     group = augroup,
     callback = function()
-      require("fancyline.utils.lsp").invalidate_all()
-      require("fancyline.renderer").invalidate({ "lsp", "lsp_progress", "lsp_clients" })
+      _cached.lsp.invalidate_all()
+      _cached.renderer.invalidate({ "lsp", "lsp_progress", "lsp_clients" })
       M.refresh()
     end,
   })
@@ -247,7 +256,7 @@ local function setup_autocmds()
       require("fancyline.renderer.border").clear_cache()
       require("fancyline.renderer.border").invalidate_theme_cache()
       theme.apply(theme.get(theme_name, forced_variant))
-      require("fancyline.renderer").invalidate()
+      _cached.renderer.invalidate()
       M.refresh()
     end,
   })
@@ -304,7 +313,12 @@ function M.setup(opts)
   require("fancyline.renderer.border").pregenerate_highlights()
   setup_autocmds()
   setup_refresh_timer()
-  require("fancyline.renderer").preload_modules()
+
+  -- Cache module references for performance (avoids require() in autocmds)
+  _cached.git = require("fancyline.utils.git")
+  _cached.diagnostics = require("fancyline.utils.diagnostics")
+  _cached.renderer = require("fancyline.renderer")
+  _cached.lsp = require("fancyline.utils.lsp")
 
   if config.extensions then
     require("fancyline.extensions").setup(config.extensions)

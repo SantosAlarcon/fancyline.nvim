@@ -6,4 +6,8 @@ local function add_helptags()
 end
 add_helptags()
 
-require("fancyline")
+-- Defer loading to avoid blocking Neovim startup
+-- The actual require will happen on first statusline render
+vim.defer_fn(function()
+  require("fancyline")
+end, 0)
