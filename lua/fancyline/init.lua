@@ -34,6 +34,10 @@ end
 ---@type string
 local current_statusline = ""
 
+-- Rate limiting for refreshes (minimum time between renders in ms)
+local last_render_time = 0
+local MIN_RENDER_INTERVAL = 16 -- ~60fps, cap at 60 renders per second
+
 -- Cached module references for performance (avoids require() in autocmds)
 ---@type table<string, any>
 local _cached = {
@@ -193,10 +197,12 @@ local function setup_autocmds()
     end,
   })
 
-  safe_autocmd("CursorHold", {
-    group = augroup,
-    callback = render_callback,
-  })
+  -- REMOVED: CursorHold was causing unnecessary re-renders every few seconds
+  -- The statusline will still update on actual events (BufEnter, ModeChanged, etc.)
+  -- safe_autocmd("CursorHold", {
+  --   group = augroup,
+  --   callback = render_callback,
+  -- })
 
   safe_autocmd("DiagnosticChanged", {
     group = augroup,
@@ -366,6 +372,13 @@ function M.refresh()
   if not enabled then
     return
   end
+  
+  -- Rate limiting: don't render more than MIN_RENDER_INTERVAL
+  local now = vim.loop.now()
+  if now - last_render_time < MIN_RENDER_INTERVAL then
+    return
+  end
+  last_render_time = now
   
   local new_status = _cached.statusline.render(config)
   if new_status ~= current_statusline then
