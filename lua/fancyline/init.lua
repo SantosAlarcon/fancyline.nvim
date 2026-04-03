@@ -41,6 +41,7 @@ local _cached = {
   diagnostics = nil,
   renderer = nil,
   lsp = nil,
+  statusline = nil,
 }
 
 local function load_config(opts)
@@ -329,6 +330,7 @@ function M.setup(opts)
     _cached.diagnostics = require("fancyline.utils.diagnostics")
     _cached.renderer = require("fancyline.renderer")
     _cached.lsp = require("fancyline.utils.lsp")
+    _cached.statusline = require("fancyline.statusline")
 
     if config.extensions then
       require("fancyline.extensions").setup(config.extensions)
@@ -343,7 +345,7 @@ function M.render()
   if not enabled then
     return ""
   end
-  return require("fancyline.statusline").render(config)
+  return _cached.statusline.render(config)
 end
 
 function M.enable()
@@ -365,7 +367,7 @@ function M.refresh()
     return
   end
   
-  local new_status = require("fancyline.statusline").render(config)
+  local new_status = _cached.statusline.render(config)
   if new_status ~= current_statusline then
     current_statusline = new_status
     vim.o.statusline = new_status

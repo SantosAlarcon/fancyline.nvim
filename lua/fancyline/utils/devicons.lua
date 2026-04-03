@@ -60,9 +60,9 @@ local static_icon_map = {
 
   -- Shell
   sh = "󰆍",
-  bash = "�EBUG",
-  zsh = "�EBUG",
-  fish = "�ाण",
+  bash = "󰆍",
+  zsh = "󰆍",
+  fish = "�.stream",
   ps1 = "󰨝",
 
   -- Database
