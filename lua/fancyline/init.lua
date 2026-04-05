@@ -100,14 +100,7 @@ local function is_git_repo(cwd)
   if not cwd or cwd == "" then
     return false
   end
-  -- vim.fs.root requires Neovim 0.8+, fallback for older versions
-  if vim.fs.root then
-    return vim.fs.root(cwd, { ".git" }) ~= nil
-  else
-    -- Fallback: check if .git directory exists
-    local git_dir = cwd .. "/.git"
-    return vim.fn.isdirectory(git_dir) == 1
-  end
+  return vim.fs.root(cwd, { ".git" }) ~= nil
 end
 
 local function ensure_git_utils()
@@ -329,6 +322,13 @@ end
 ---Setup Fancyline with the given options.
 ---@param opts? FancylineConfig
 function M.setup(opts)
+  -- Check Neovim version (requires 0.10+)
+  local major, minor = vim.version().major, vim.version().minor
+  if major < 1 or (major == 1 and minor < 10) then
+    vim.notify("[Fancyline] Requires Neovim 0.10+. Current: " .. vim.version().major .. "." .. vim.version().minor, vim.log.levels.ERROR)
+    return
+  end
+
   config = load_config(opts)
 
   _G.fancyline_theme_config = {

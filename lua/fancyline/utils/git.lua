@@ -19,13 +19,7 @@ local function is_git_repo(cwd)
   if not cwd or cwd == "" then
     return false
   end
-  -- vim.fs.root requires Neovim 0.8+, fallback for older versions
-  if vim.fs.root then
-    return vim.fs.root(cwd, { ".git" }) ~= nil
-  else
-    local git_dir = cwd .. "/.git"
-    return vim.fn.isdirectory(git_dir) == 1
-  end
+  return vim.fs.root(cwd, { ".git" }) ~= nil
 end
 
 local function parse_porcelain_status(output)
