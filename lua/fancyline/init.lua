@@ -100,7 +100,9 @@ local function is_git_repo(cwd)
   if not cwd or cwd == "" then
     return false
   end
-  return vim.fs.root(cwd, { ".git" }) ~= nil
+  -- Neovim 0.10+ required - vim.fs.root should always exist
+  local root = vim.fs.root(cwd, { ".git" })
+  return root ~= nil
 end
 
 local function ensure_git_utils()
@@ -324,7 +326,7 @@ end
 function M.setup(opts)
   -- Check Neovim version (requires 0.10+)
   local major, minor = vim.version().major, vim.version().minor
-  if major < 1 or (major == 1 and minor < 10) then
+  if major < 0 or (major == 0 and minor < 10) then
     vim.notify("[Fancyline] Requires Neovim 0.10+. Current: " .. vim.version().major .. "." .. vim.version().minor, vim.log.levels.ERROR)
     return
   end
