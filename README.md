@@ -65,6 +65,29 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 require("fancyline").setup()
 ```
 
+## Windows Performance
+
+If fancyline feels slow on Windows, the issue is likely Windows Defender scanning each `git` process spawn. To fix:
+
+### Option 1: Add Neovim to Windows Defender Exclusions (Recommended)
+
+1. Open Windows Security
+2. Go to Virus & threat protection > Manage settings
+3. Under Exclusions, click "Add an exclusion"
+4. Select "Executable" and add `nvim.exe`
+
+### Option 2: Use Git Bash Shell
+
+Add to your Neovim config:
+
+```lua
+vim.o.shell = vim.fn.executable("bash") == 1 and "bash.exe" or vim.o.shell
+```
+
+### Option 3: Use WSL
+
+Running Neovim on Windows Subsystem for Linux bypasses these issues entirely.
+
 ## Configuration
 
 ### Presets

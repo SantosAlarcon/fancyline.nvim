@@ -5,30 +5,40 @@ local M = {}
 ---@param ctx FancylineContext
 ---@return FancylineComponentResult?
 function M.provider(opts, ctx)
-  local has_git, git_utils = pcall(require, "fancyline.utils.git")
-  if not has_git then
+  local cwd = vim.fn.getcwd()
+  if not cwd or cwd == "" then
     return nil
   end
 
-  local cwd = git_utils.get_root()
-  if not cwd then
+  if not vim.fs.root(cwd, { ".git" }) then
     return nil
   end
 
-  local ok, result = pcall(vim.fn.systemlist, {
-    "git",
-    "-C",
-    cwd,
-    "log",
-    "-1",
-    "--pretty=%B"
-  })
+  local result
+  if vim.system then
+    local cmd = { "git", "-C", cwd, "log", "-1", "--pretty=%B" }
+    local proc = vim.system(cmd, { text = true }):wait()
+    result = proc.stdout
+  else
+    local ok, out = pcall(vim.fn.systemlist, {
+      "git",
+      "-C",
+      cwd,
+      "log",
+      "-1",
+      "--pretty=%B"
+    })
+    if not ok or not out or #out == 0 then
+      return nil
+    end
+    result = out[1]
+  end
 
-  if not ok or not result or #result == 0 then
+  if not result or result == "" then
     return nil
   end
 
-  local message = result[1] or ""
+  local message = type(result) == "string" and result or result[1] or ""
   if message == "" then
     return nil
   end

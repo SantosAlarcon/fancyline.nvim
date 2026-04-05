@@ -96,6 +96,26 @@ local function create_highlights(theme_name, theme_variant)
   vim.api.nvim_set_hl(0, "FancylineReset", { fg = "NONE", bg = "NONE" })
 end
 
+local function ensure_git_utils()
+  if not _cached.git then
+    if is_git_repo(vim.fn.getcwd()) then
+      _cached.git = require("fancyline.utils.git")
+    end
+  end
+  return _cached.git
+end
+
+local function is_git_repo(cwd)
+  return cwd and cwd ~= "" and vim.fs.root(cwd, { ".git" }) ~= nil
+end
+
+local function invalidate_git_if_loaded()
+  local git = ensure_git_utils()
+  if git then
+    git.invalidate()
+  end
+end
+
 local function setup_autocmds()
   local augroup = vim.api.nvim_create_augroup("Fancyline", { clear = false })
 
@@ -112,7 +132,7 @@ local function setup_autocmds()
   safe_autocmd("BufEnter", {
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
       _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
       render_callback()
@@ -122,7 +142,7 @@ local function setup_autocmds()
   safe_autocmd("WinEnter", {
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
       render_callback()
     end,
@@ -224,7 +244,7 @@ local function setup_autocmds()
   safe_autocmd("GitSignsUpdate", {
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
       M.refresh()
     end,
@@ -234,7 +254,7 @@ local function setup_autocmds()
     pattern = "GitSignsRefreshed",
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.renderer.invalidate({ "git_diff", "git_signs" })
       M.refresh()
     end,
@@ -323,7 +343,6 @@ function M.setup(opts)
     setup_autocmds()
     setup_refresh_timer()
 
-    _cached.git = require("fancyline.utils.git")
     _cached.diagnostics = require("fancyline.utils.diagnostics")
     _cached.renderer = require("fancyline.renderer")
     _cached.lsp = require("fancyline.utils.lsp")
