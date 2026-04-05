@@ -107,7 +107,8 @@ end
 
 local function ensure_git_utils()
   if not _cached.git then
-    if is_git_repo(vim.fn.getcwd()) then
+    local cwd = vim.fn.getcwd()
+    if cwd and cwd ~= "" and vim.fs.root(cwd, { ".git" }) then
       _cached.git = require("fancyline.utils.git")
     end
   end
