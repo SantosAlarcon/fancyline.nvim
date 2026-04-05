@@ -299,39 +299,30 @@ end
 ---Setup Fancyline with the given options.
 ---@param opts? FancylineConfig
 function M.setup(opts)
-  -- Load config immediately (fast)
   config = load_config(opts)
 
-  local theme = require("fancyline.themes")
-  local theme_name = config.theme
-  local theme_variant = nil
-
-  if type(theme_name) == "table" and theme_name.name then
-    theme_variant = theme_name.variant
-    theme_name = theme_name.name
-  end
-
-  local current_theme = theme.get(theme_name, theme_variant)
-  theme.apply(current_theme)
-
-  config._theme_name = theme_name
-  config._theme_variant = theme_variant
-
-  -- Store user's theme config globally so it can be reused by border.lua and autocmds
   _G.fancyline_theme_config = {
-    name = theme_name,
-    variant = theme_variant,
+    name = config.theme and config.theme.name or config.theme or "auto",
+    variant = config.theme and config.theme.variant or nil,
   }
 
-  create_highlights(theme_name, theme_variant)
-
-  -- Defer remaining setup to avoid blocking UI
   vim.schedule(function()
+    local theme = require("fancyline.themes")
+    local theme_name = _G.fancyline_theme_config.name
+    local theme_variant = _G.fancyline_theme_config.variant
+
+    local current_theme = theme.get(theme_name, theme_variant)
+    theme.apply(current_theme)
+
+    config._theme_name = theme_name
+    config._theme_variant = theme_variant
+
+    create_highlights(theme_name, theme_variant)
+
     require("fancyline.renderer.border").pregenerate_highlights()
     setup_autocmds()
     setup_refresh_timer()
 
-    -- Cache module references for performance (avoids require() in autocmds)
     _cached.git = require("fancyline.utils.git")
     _cached.diagnostics = require("fancyline.utils.diagnostics")
     _cached.renderer = require("fancyline.renderer")
