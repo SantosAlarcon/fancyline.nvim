@@ -96,6 +96,20 @@ local function create_highlights(theme_name, theme_variant)
   vim.api.nvim_set_hl(0, "FancylineReset", { fg = "NONE", bg = "NONE" })
 end
 
+local function is_git_repo(cwd)
+  if not cwd or cwd == "" then
+    return false
+  end
+  -- vim.fs.root requires Neovim 0.8+, fallback for older versions
+  if vim.fs.root then
+    return vim.fs.root(cwd, { ".git" }) ~= nil
+  else
+    -- Fallback: check if .git directory exists
+    local git_dir = cwd .. "/.git"
+    return vim.fn.isdirectory(git_dir) == 1
+  end
+end
+
 local function ensure_git_utils()
   if not _cached.git then
     if is_git_repo(vim.fn.getcwd()) then
@@ -103,10 +117,6 @@ local function ensure_git_utils()
     end
   end
   return _cached.git
-end
-
-local function is_git_repo(cwd)
-  return cwd and cwd ~= "" and vim.fs.root(cwd, { ".git" }) ~= nil
 end
 
 local function invalidate_git_if_loaded()
@@ -340,13 +350,14 @@ function M.setup(opts)
     create_highlights(theme_name, theme_variant)
 
     require("fancyline.renderer.border").pregenerate_highlights()
-    setup_autocmds()
-    setup_refresh_timer()
 
     _cached.diagnostics = require("fancyline.utils.diagnostics")
     _cached.renderer = require("fancyline.renderer")
     _cached.lsp = require("fancyline.utils.lsp")
     _cached.statusline = require("fancyline.statusline")
+
+    setup_autocmds()
+    setup_refresh_timer()
 
     if config.extensions then
       require("fancyline.extensions").setup(config.extensions)
