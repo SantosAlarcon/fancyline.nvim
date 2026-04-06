@@ -17,6 +17,7 @@ local content_cache = {}
 local border_cache = {}
 local content_hl_counter = 0
 local border_hl_counter = 0
+local _pregenerated = false
 
 ---Cached theme data
 local cached_theme = nil
@@ -48,6 +49,11 @@ local COMMON_COLORS = {
 
 ---Pre-generate common highlight groups
 local function pregenerate_highlights()
+	if _pregenerated then
+		return
+	end
+	_pregenerated = true
+
 	local base_names = { "FancylineMode", "FancylineComponent", "Icon", "FancylineGitBranch", "FancylineLsp" }
 	local bg_colors = { "NONE", "#1e1e1e", "#252526", "#282c34" }
 
@@ -431,6 +437,7 @@ function M.clear_cache()
 	border_cache = {}
 	content_hl_counter = 0
 	border_hl_counter = 0
+	_pregenerated = false
 	cached_theme = nil
 	cached_modes = nil
 	cached_shades = nil

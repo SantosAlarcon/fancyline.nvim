@@ -34,6 +34,10 @@ end
 ---@type string
 local current_statusline = ""
 
+-- Rate limiting for refreshes (minimum time between renders in ms)
+local last_render_time = 0
+local MIN_RENDER_INTERVAL = 16 -- ~60fps, cap at 60 renders per second
+
 -- Cached module references for performance (avoids require() in autocmds)
 ---@type table<string, any>
 local _cached = {
@@ -41,6 +45,7 @@ local _cached = {
   diagnostics = nil,
   renderer = nil,
   lsp = nil,
+  statusline = nil,
 }
 
 local function load_config(opts)
@@ -91,6 +96,32 @@ local function create_highlights(theme_name, theme_variant)
   vim.api.nvim_set_hl(0, "FancylineReset", { fg = "NONE", bg = "NONE" })
 end
 
+local function is_git_repo(cwd)
+  if not cwd or cwd == "" then
+    return false
+  end
+  -- Neovim 0.10+ required - vim.fs.root should always exist
+  local root = vim.fs.root(cwd, { ".git" })
+  return root ~= nil
+end
+
+local function ensure_git_utils()
+  if not _cached.git then
+    local cwd = vim.fn.getcwd()
+    if cwd and cwd ~= "" and vim.fs.root(cwd, { ".git" }) then
+      _cached.git = require("fancyline.utils.git")
+    end
+  end
+  return _cached.git
+end
+
+local function invalidate_git_if_loaded()
+  local git = ensure_git_utils()
+  if git then
+    git.invalidate()
+  end
+end
+
 local function setup_autocmds()
   local augroup = vim.api.nvim_create_augroup("Fancyline", { clear = false })
 
@@ -107,9 +138,18 @@ local function setup_autocmds()
   safe_autocmd("BufEnter", {
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
-      _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.renderer.invalidate({ "file", "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
+      render_callback()
+    end,
+  })
+
+  safe_autocmd("BufReadPost", {
+    group = augroup,
+    callback = function()
+      -- Re-render after file is read so buffer name is available
+      _cached.renderer.invalidate({ "file" })
       render_callback()
     end,
   })
@@ -117,7 +157,7 @@ local function setup_autocmds()
   safe_autocmd("WinEnter", {
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
       render_callback()
     end,
@@ -128,15 +168,21 @@ local function setup_autocmds()
     callback = render_callback,
   })
 
-  -- Debounced CursorMoved (50ms delay - responsive but not too aggressive)
-  local cursor_moved_debounced = debounced_refresh(render_callback, "cursor_moved", 50)
+  -- CursorMoved - ONLY invalidate position, DO NOT re-render
+  -- Rendering on every cursor move is the main performance killer
+  local cursor_moved_debounced = debounced_refresh(function()
+    -- Only invalidate position cache, don't re-render
+    _cached.renderer.invalidate({ "position" })
+  end, "cursor_moved", 100)
   safe_autocmd("CursorMoved", {
     group = augroup,
     callback = cursor_moved_debounced,
   })
 
-  -- Debounced CursorMovedI (50ms delay for insert mode)
-  local cursor_moved_i_debounced = debounced_refresh(render_callback, "cursor_moved_i", 50)
+  -- CursorMovedI - ONLY invalidate position, DO NOT re-render
+  local cursor_moved_i_debounced = debounced_refresh(function()
+    _cached.renderer.invalidate({ "position" })
+  end, "cursor_moved_i", 100)
   safe_autocmd("CursorMovedI", {
     group = augroup,
     callback = cursor_moved_i_debounced,
@@ -186,10 +232,12 @@ local function setup_autocmds()
     end,
   })
 
-  safe_autocmd("CursorHold", {
-    group = augroup,
-    callback = render_callback,
-  })
+  -- REMOVED: CursorHold was causing unnecessary re-renders every few seconds
+  -- The statusline will still update on actual events (BufEnter, ModeChanged, etc.)
+  -- safe_autocmd("CursorHold", {
+  --   group = augroup,
+  --   callback = render_callback,
+  -- })
 
   safe_autocmd("DiagnosticChanged", {
     group = augroup,
@@ -211,7 +259,7 @@ local function setup_autocmds()
   safe_autocmd("GitSignsUpdate", {
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status" })
       M.refresh()
     end,
@@ -221,7 +269,7 @@ local function setup_autocmds()
     pattern = "GitSignsRefreshed",
     group = augroup,
     callback = function()
-      _cached.git.invalidate()
+      invalidate_git_if_loaded()
       _cached.renderer.invalidate({ "git_diff", "git_signs" })
       M.refresh()
     end,
@@ -286,53 +334,57 @@ end
 ---Setup Fancyline with the given options.
 ---@param opts? FancylineConfig
 function M.setup(opts)
+  -- Check Neovim version (requires 0.10+)
+  local major, minor = vim.version().major, vim.version().minor
+  if major < 0 or (major == 0 and minor < 10) then
+    vim.notify("[Fancyline] Requires Neovim 0.10+. Current: " .. vim.version().major .. "." .. vim.version().minor, vim.log.levels.ERROR)
+    return
+  end
+
   config = load_config(opts)
 
-  local theme = require("fancyline.themes")
-  local theme_name = config.theme
-  local theme_variant = nil
-
-  if type(theme_name) == "table" and theme_name.name then
-    theme_variant = theme_name.variant
-    theme_name = theme_name.name
-  end
-
-  local current_theme = theme.get(theme_name, theme_variant)
-  theme.apply(current_theme)
-
-  config._theme_name = theme_name
-  config._theme_variant = theme_variant
-
-  -- Store user's theme config globally so it can be reused by border.lua and autocmds
   _G.fancyline_theme_config = {
-    name = theme_name,
-    variant = theme_variant,
+    name = config.theme and config.theme.name or config.theme or "auto",
+    variant = config.theme and config.theme.variant or nil,
   }
 
-  create_highlights(theme_name, theme_variant)
-  require("fancyline.renderer.border").pregenerate_highlights()
-  setup_autocmds()
-  setup_refresh_timer()
+  vim.schedule(function()
+    local theme = require("fancyline.themes")
+    local theme_name = _G.fancyline_theme_config.name
+    local theme_variant = _G.fancyline_theme_config.variant
 
-  -- Cache module references for performance (avoids require() in autocmds)
-  _cached.git = require("fancyline.utils.git")
-  _cached.diagnostics = require("fancyline.utils.diagnostics")
-  _cached.renderer = require("fancyline.renderer")
-  _cached.lsp = require("fancyline.utils.lsp")
+    local current_theme = theme.get(theme_name, theme_variant)
+    theme.apply(current_theme)
 
-  if config.extensions then
-    require("fancyline.extensions").setup(config.extensions)
-  end
+    config._theme_name = theme_name
+    config._theme_variant = theme_variant
 
-  enabled = true
-  M.refresh()
+    create_highlights(theme_name, theme_variant)
+
+    require("fancyline.renderer.border").pregenerate_highlights()
+
+    _cached.diagnostics = require("fancyline.utils.diagnostics")
+    _cached.renderer = require("fancyline.renderer")
+    _cached.lsp = require("fancyline.utils.lsp")
+    _cached.statusline = require("fancyline.statusline")
+
+    setup_autocmds()
+    setup_refresh_timer()
+
+    if config.extensions then
+      require("fancyline.extensions").setup(config.extensions)
+    end
+
+    enabled = true
+    M.refresh()
+  end)
 end
 
 function M.render()
   if not enabled then
     return ""
   end
-  return require("fancyline.statusline").render(config)
+  return _cached.statusline.render(config)
 end
 
 function M.enable()
@@ -354,7 +406,14 @@ function M.refresh()
     return
   end
   
-  local new_status = require("fancyline.statusline").render(config)
+  -- Rate limiting: don't render more than MIN_RENDER_INTERVAL
+  local now = vim.loop.now()
+  if now - last_render_time < MIN_RENDER_INTERVAL then
+    return
+  end
+  last_render_time = now
+  
+  local new_status = _cached.statusline.render(config)
   if new_status ~= current_statusline then
     current_statusline = new_status
     vim.o.statusline = new_status
