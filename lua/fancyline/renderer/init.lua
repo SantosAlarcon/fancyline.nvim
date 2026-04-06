@@ -308,7 +308,13 @@ end
 function M.invalidate(names)
 	if names then
 		for _, name in ipairs(names) do
-			component_cache[name] = nil
+			-- Invalidate all cache entries for this component
+			-- Cache keys are "name_hash", so we need to match the prefix
+			for key in pairs(component_cache) do
+				if key:match("^" .. name .. "_") then
+					component_cache[key] = nil
+				end
+			end
 		end
 	else
 		component_cache = {}
