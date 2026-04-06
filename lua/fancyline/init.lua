@@ -145,6 +145,15 @@ local function setup_autocmds()
     end,
   })
 
+  safe_autocmd("BufReadPost", {
+    group = augroup,
+    callback = function()
+      -- Re-render after file is read so buffer name is available
+      _cached.renderer.invalidate({ "file" })
+      render_callback()
+    end,
+  })
+
   safe_autocmd("WinEnter", {
     group = augroup,
     callback = function()
