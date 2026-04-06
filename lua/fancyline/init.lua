@@ -140,7 +140,7 @@ local function setup_autocmds()
     callback = function()
       invalidate_git_if_loaded()
       _cached.diagnostics.invalidate_buf(vim.api.nvim_get_current_buf())
-      _cached.renderer.invalidate({ "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
+      _cached.renderer.invalidate({ "file", "git_branch", "git_diff", "git_signs", "branch_status", "diagnostics", "errors", "warnings", "infos", "hints" })
       render_callback()
     end,
   })
