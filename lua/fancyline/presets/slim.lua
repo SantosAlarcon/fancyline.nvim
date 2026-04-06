@@ -27,7 +27,7 @@ return {
 			style = "none",
 		},
 		git_branch = {
-			icon = "",
+			icon = "",
 			style = "none",
 		},
 		git_diff = {

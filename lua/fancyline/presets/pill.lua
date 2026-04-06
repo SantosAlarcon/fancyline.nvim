@@ -27,6 +27,7 @@ return {
 			bold = true
 		},
 		git_branch = {
+			icon = "",
 			padding_left = 1
 		},
 		file = {

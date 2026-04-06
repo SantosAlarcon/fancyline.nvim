@@ -4,5 +4,9 @@ return {
     center = { "file" },
     right = { "diagnostics", "cursor" },
   },
-  components = {},
+  components = {
+    git_branch = {
+      icon = "",
+    },
+  },
 }

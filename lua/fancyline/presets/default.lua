@@ -45,6 +45,7 @@ return {
 			bg = "shade_3"
 		},
 		git_branch = {
+			icon = "",
 			padding_left = 1
 		},
 		cwd = {

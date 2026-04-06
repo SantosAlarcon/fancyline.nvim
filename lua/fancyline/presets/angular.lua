@@ -37,7 +37,7 @@ return {
       },
     },
     git_branch = {
-      icon = "󰊢",
+      icon = "",
       border = {
         left = { style = "square", fg = "#c678dd", bg = "shade_5" },
         right = { style = "square", fg = "#c678dd", bg = "shade_5" },

@@ -378,6 +378,8 @@ function M.setup(opts)
     enabled = true
     M.refresh()
   end)
+
+  require("fancyline.commands").setup()
 end
 
 function M.render()
@@ -401,17 +403,19 @@ function M.disable()
   current_statusline = ""
 end
 
-function M.refresh()
+function M.refresh(force)
   if not enabled then
     return
   end
   
-  -- Rate limiting: don't render more than MIN_RENDER_INTERVAL
-  local now = vim.loop.now()
-  if now - last_render_time < MIN_RENDER_INTERVAL then
-    return
+  -- Rate limiting: don't render more than MIN_RENDER_INTERVAL (unless forced)
+  if not force then
+    local now = vim.loop.now()
+    if now - last_render_time < MIN_RENDER_INTERVAL then
+      return
+    end
   end
-  last_render_time = now
+  last_render_time = 0  -- Reset to force next refresh
   
   local new_status = _cached.statusline.render(config)
   if new_status ~= current_statusline then
@@ -422,6 +426,39 @@ end
 
 function M.get_config()
   return config
+end
+
+function M.set_preset(preset_name)
+  if not preset_name or preset_name == "" then
+    return false
+  end
+
+  -- Reset presets cache
+  require("fancyline.presets").reset()
+
+  -- Load new preset
+  local preset_config = require("fancyline.presets").load(preset_name)
+  if not preset_config or vim.tbl_count(preset_config) == 0 then
+    return false
+  end
+
+  -- Replace config with preset (complete replacement)
+  if preset_config.sections then
+    config.sections = preset_config.sections
+  end
+  if preset_config.components then
+    config.components = preset_config.components
+  end
+  if preset_config.separator then
+    config.separator = preset_config.separator
+  end
+  config.preset = preset_name
+
+  -- Refresh the statusline (force to bypass rate limiter)
+  require("fancyline.renderer").invalidate()
+  M.refresh(true)
+
+  return true
 end
 
 function M.reload()

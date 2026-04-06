@@ -27,13 +27,13 @@ local mode_theme_keys = {
 
 -- Default text for main modes (shown when no custom text is configured)
 local default_mode_text = {
-	n = "N",
-	i = "I",
-	v = "V",
-	t = "T",
-	c = ":",
-	r = "R",
-	s = "S",
+	n = "NORMAL",
+	i = "INSERT",
+	v = "VISUAL",
+	t = "TERMINAL",
+	c = "COMMAND",
+	r = "REPLACE",
+	s = "SELECT",
 	["\22"] = "V-BLOCK",
 	["\19"] = "S-BLOCK",
 }
