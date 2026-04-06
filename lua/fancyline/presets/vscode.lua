@@ -10,14 +10,24 @@ return {
 		mode = {
 			icon = "",
 			style = "none",
+			border = {
+				left = {
+					style = "none"
+				},
+				right = {
+					style = "none"
+				}
+			}
 		},
 		file = {
 			icon = "󰈚",
+			padding_left = 1,
 			style = "none",
 		},
 		git_branch = {
 			icon = "󰊢",
 			style = "none",
+			padding_left = 1,
 		},
 		errors = {
 			icon = "",
@@ -38,20 +48,25 @@ return {
 		encoding = {
 			icon = "",
 			style = "none",
+			padding_left = 1,
 		},
 		indent = {
 			icon = "󰌒",
+			padding_left = 1,
 			style = "none",
 		},
 		lsp = {
-			style = "none"
+			style = "none",
+			padding_left = 1
 		},
 		position = {
 			icon = "󰀹",
+			padding_left = 1,
 			format = "Ln %l, Col %c",
 			style = "none",
 		},
 		filetype = {
+			padding_left = 1,
 			icon = nil,
 			show_icon = true,
 			show_text = true,

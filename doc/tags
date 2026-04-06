@@ -29,12 +29,13 @@ fancyline-sections	fancyline.txt	/*fancyline-sections*
 fancyline-setup	fancyline.txt	/*fancyline-setup*
 fancyline-style-config	fancyline.txt	/*fancyline-style-config*
 fancyline-telescope	fancyline.txt	/*fancyline-telescope*
-fancyline-themes	fancyline.txt	/*fancyline-themes*
 fancyline.disable()	fancyline.txt	/*fancyline.disable()*
 fancyline.enable()	fancyline.txt	/*fancyline.enable()*
 fancyline.get_config()	fancyline.txt	/*fancyline.get_config()*
 fancyline.refresh()	fancyline.txt	/*fancyline.refresh()*
 fancyline.reload()	fancyline.txt	/*fancyline.reload()*
 fancyline.render()	fancyline.txt	/*fancyline.render()*
+fancyline.set_preset()	fancyline.txt	/*fancyline.set_preset()*
 fancyline.setup()	fancyline.txt	/*fancyline.setup()*
+fancyline.toggle()	fancyline.txt	/*fancyline.toggle()*
 fancyline.txt	fancyline.txt	/*fancyline.txt*
