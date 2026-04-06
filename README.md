@@ -65,6 +65,24 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 require("fancyline").setup()
 ```
 
+## Commands
+
+FancyLine provides the `:FancyLine` command with subcommands for runtime control:
+
+| Command | Description |
+|---------|-------------|
+| `:FancyLine enable` | Enable the statusline |
+| `:FancyLine disable` | Disable the statusline |
+| `:FancyLine toggle` | Toggle enable/disable |
+| `:FancyLine refresh` | Force refresh the statusline |
+| `:FancyLine reload` | Reload highlights (useful after colorscheme change) |
+| `:FancyLine theme <name>` | Change theme dynamically |
+| `:FancyLine preset <name>` | Change preset dynamically |
+| `:FancyLine config` | Show current configuration |
+| `:FancyLine components` | List all available components |
+
+Tab autocompletion works for theme and preset names.
+
 ## Windows Performance
 
 If fancyline feels slow on Windows, the issue is likely Windows Defender scanning each `git` process spawn. To fix:
@@ -154,10 +172,10 @@ Each component is optional and fully configurable:
 require("fancyline").setup({
   components = {
     mode = {
-      icon = "N",
+      icon = "",
       text = { n = "NORMAL", i = "INSERT", v = "VISUAL" },
     },
-    git_branch = { icon = "main" },
+    git_branch = { icon = "" },
     file = { use_devicon = true },
     diagnostics = { icons = { error = "!", warn = "~", info = "i", hint = "?" } },
     lsp = { icon = " LSP" },
@@ -257,9 +275,11 @@ require("fancyline").setup(opts)    -- Configure
 require("fancyline").render()       -- Get statusline string
 require("fancyline").enable()       -- Enable
 require("fancyline").disable()       -- Disable
-require("fancyline").refresh()      -- Force refresh
+require("fancyline").toggle()        -- Toggle enable/disable
+require("fancyline").refresh(force)  -- Force refresh (bypass rate limiter if true)
 require("fancyline").reload()       -- Reload highlights
 require("fancyline").get_config()   -- Get current config
+require("fancyline").set_preset(name) -- Change preset dynamically
 ```
 
 ## Project Structure

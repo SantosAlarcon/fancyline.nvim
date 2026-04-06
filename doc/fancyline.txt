@@ -1,17 +1,18 @@
 *fancyline.txt*        A modern, configurable statusline for Neovim
 
-==============================================================================
-CONTENTS                                                    *fancyline-contents*
+ ==============================================================================
+ CONTENTS                                                    *fancyline-contents*
 
     1. Introduction ........................ |fancyline-intro|
     2. Setup .............................. |fancyline-setup|
-    3. Configuration ....................... |fancyline-config|
-    4. Components ......................... |fancyline-components|
-    5. Presets ............................. |fancyline-presets|
-    6. Themes .............................. |fancyline-themes|
-    7. Extensions .......................... |fancyline-extensions|
-    8. API Functions ....................... |fancyline-api|
-    9. Highlight Groups ..................... |fancyline-highlights|
+    3. Commands ............................ |fancyline-commands|
+    4. Configuration ....................... |fancyline-config|
+    5. Components ......................... |fancyline-components|
+    6. Presets ............................. |fancyline-presets|
+    7. Themes .............................. |fancyline-themes|
+    8. Extensions .......................... |fancyline-extensions|
+    9. API Functions ....................... |fancyline-api|
+   10. Highlight Groups ..................... |fancyline-highlights|
 
 ==============================================================================
 INTRODUCTION                                                 *fancyline-intro*
@@ -310,17 +311,39 @@ Example usage: >
         preset = "minimal",
     })
 
-Or combine preset with customizations: >
+ ==============================================================================
+ COMMANDS                                                    *fancyline-commands*
 
-    require("fancyline").setup({
-        preset = "default",
-        components = {
-            mode = { icon = "neovim" },
-        },
-    })
+ FancyLine provides the |:FancyLine| command with subcommands for runtime control.
+ All subcommands support Tab autocompletion.
 
-==============================================================================
-THEMES                                                    *fancyline-themes*
+ Subcommands:                               *fancyline-command-list*
+
+     :FancyLine enable          Enable the statusline
+     :FancyLine disable         Disable the statusline
+     :FancyLine toggle          Toggle enable/disable
+     :FancyLine refresh         Force refresh the statusline
+     :FancyLine reload          Reload highlights (after colorscheme change)
+     :FancyLine theme <name>    Change theme dynamically
+     :FancyLine preset <name>   Change preset dynamically
+     :FancyLine config          Show current configuration
+     :FancyLine components      List all available components
+
+ Examples: >
+
+     :FancyLine toggle              " Toggle statusline on/off
+     :FancyLine preset rounded      " Switch to rounded preset
+     :FancyLine theme dracula      " Switch to dracula theme
+     :FancyLine config             " View current config
+
+ Tab Autocompletion                                        *fancyline-completion*
+
+ Tab autocompletion works for:
+ - Theme names:  :FancyLine theme <Tab>
+ - Preset names: :FancyLine preset <Tab>
+
+ ==============================================================================
+ THEMES                                                    *fancyline-themes*
 
 Fancyline automatically detects and matches your colorscheme. Theme can be
 set as:
@@ -409,11 +432,18 @@ enable()                                                *fancyline.enable()*
 disable()                                              *fancyline.disable()*
     Disable fancyline and clear the statusline.
 
-refresh()                                              *fancyline.refresh()*
-    Force refresh the statusline (re-render without full reset).
+toggle()                                                *fancyline.toggle()*
+    Toggle the statusline on/off.
+
+refresh(force)                                    *fancyline.refresh()*
+    Force refresh the statusline. Pass `true` to bypass the rate limiter.
 
 get_config()                                        *fancyline.get_config()*
     Returns the current configuration table.
+
+set_preset(name)                              *fancyline.set_preset()*
+    Change the preset dynamically at runtime.
+    Returns `true` on success, `false` if preset not found.
 
 reload()                                                *fancyline.reload()*
     Reload highlights and re-render the statusline.
@@ -427,12 +457,7 @@ Example keybinding for manual refresh: >
 Example toggle: >
 
     vim.keymap.set("n", "<leader>ft", function()
-        local fancyline = require("fancyline")
-        if vim.o.statusline:match("fancyline") then
-            fancyline.disable()
-        else
-            fancyline.enable()
-        end
+        require("fancyline").toggle()
     end, { desc = "Toggle Fancyline" })
 
 ==============================================================================
