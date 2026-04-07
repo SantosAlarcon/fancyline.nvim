@@ -259,9 +259,9 @@ function M.render_component(icon, text, style_name, highlight, fg, bg, state, te
 	local style = M.get_style(style_name)
 	local base_hl = highlight or "FancylineComponent"
 
-	-- Resolve "mode" color
-	fg = resolve_mode_color(fg, state)
-	bg = resolve_mode_color(bg, state)
+	-- Resolve "mode" and "shade_X" colors
+	fg = resolve_shade_color(resolve_mode_color(fg, state))
+	bg = resolve_shade_color(resolve_mode_color(bg, state))
 
 	-- Get dynamic highlight with custom fg/bg if provided
 	local hl = get_hl_name(base_hl, fg, bg, text_bold)

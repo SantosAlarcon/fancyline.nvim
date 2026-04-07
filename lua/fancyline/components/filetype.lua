@@ -50,6 +50,7 @@ local fallback_icons = {
 }
 
 -- Lazy detection of icon providers
+---@return string symbol, string? color
 local function get_icon_for_filetype(filetype)
   -- 1. Try mini.icons first (priority)
   local ok, result = pcall(function()
@@ -58,18 +59,25 @@ local function get_icon_for_filetype(filetype)
     end
   end)
   if ok and result then
-    return result
+    if result.symbol then
+      -- mini.icons returns { symbol, hl: { fg, bg } }
+      local color = result.hl and result.hl.fg or nil
+      return result.symbol, color
+    end
+    -- Fallback: if result is just a string (shouldn't happen)
+    return result, nil
   end
 
   -- 2. Try nvim-web-devicons (use module-level require)
-  local icon = devicons.get_icon_by_filetype(filetype)
+  local icon, name, color = devicons.get_icon_by_filetype(filetype)
   if icon then
-    return icon
+    -- devicons returns icon, icon_name, color
+    return icon, color or nil
   end
 
   -- 3. Fallback to static map
   local lower_ft = filetype:lower()
-  return fallback_icons[lower_ft] or fallback_icons.default
+  return fallback_icons[lower_ft] or fallback_icons.default, nil
 end
 
 ---Provider function for the filetype component.
@@ -99,7 +107,12 @@ function M.provider(opts, ctx)
     icon_bg = opts.icon.bg
   else
     -- Use icon providers for automatic icon detection
-    icon_symbol = get_icon_for_filetype(filetype)
+    icon_symbol, icon_fg = get_icon_for_filetype(filetype)
+    -- Merge with user's icon colors if they provided any (without symbol)
+    if type(opts.icon) == "table" then
+      icon_fg = opts.icon.fg or icon_fg
+      icon_bg = opts.icon.bg
+    end
   end
 
   local display_ft = filetype

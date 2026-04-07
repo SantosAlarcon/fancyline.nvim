@@ -30,7 +30,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 
 - **33 Components** - Mode, git info, file, diagnostics, LSP, position, and more
 - **20 Built-in Themes** - Auto-detects your colorscheme (tokyonight, catppuccin, dracula, nord, github, material with 5 variants, and more)
-- **11 Presets** - From minimal to full-featured, with styled border variants
+- **9 Presets** - From slim to feature-rich, with styled border variants
 - **Custom Borders** - Fully customizable with separate styles and colors for each side
 - **Icon Providers** - Supports mini.icons, nvim-web-devicons, or fallback icons
 - **Theme Variants** - Automatic dark/light variant detection
@@ -79,7 +79,6 @@ FancyLine provides the `:FancyLine` command with subcommands for runtime control
 | `:FancyLine theme <name>` | Change theme dynamically |
 | `:FancyLine preset <name>` | Change preset dynamically |
 | `:FancyLine config` | Show current configuration |
-| `:FancyLine components` | List all available components |
 
 Tab autocompletion works for theme and preset names.
 
@@ -112,7 +111,7 @@ Running Neovim on Windows Subsystem for Linux bypasses these issues entirely.
 
 ```lua
 require("fancyline").setup({
-  preset = "default",  -- or "minimal", "standard", "full", "git-focused", "vscode", "slim", "pill", "brick"
+  preset = "default",  -- or "vscode", "slim", "pill", "brick"
 })
 ```
 
@@ -121,10 +120,7 @@ Available presets:
 | Preset | Description |
 |--------|-------------|
 | `default` | NvChad-style with mode, git, file, diagnostics, LSP |
-| `minimal` | Ultra-compact: mode, file, position |
-| `standard` | Balanced: mode, git, file, lsp, filetype |
-| `full` | Everything enabled |
-| `git-focused` | Git-centric with diagnostics |
+| `slim` | Minimal with text-only components |
 | `vscode` | VS Code-style layout |
 | `slim` | Minimal with git |
 | `rounded` | With rounded borders |
@@ -295,7 +291,7 @@ lua/fancyline/
 ├── presets/
 │   ├── init.lua        -- Preset loader
 │   ├── default.lua     -- NvChad-style
-│   ├── minimal.lua     -- Ultra-compact
+
 │   ├── vscode.lua      -- VS Code-style
 │   ├── rounded.lua     -- With rounded borders
 │   ├── angular.lua     -- With square borders

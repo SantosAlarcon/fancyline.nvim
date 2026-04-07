@@ -397,6 +397,10 @@ function M.enable()
   M.refresh()
 end
 
+function M.is_enabled()
+  return enabled
+end
+
 function M.disable()
   enabled = false
   vim.o.statusline = ""
@@ -464,7 +468,7 @@ end
 function M.reload()
   create_highlights()
   require("fancyline.renderer").invalidate()
-  M.refresh()
+  M.refresh(true)  -- Force refresh to apply new highlights immediately
 end
 
 return M

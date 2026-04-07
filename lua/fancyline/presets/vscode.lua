@@ -17,11 +17,13 @@ return {
 				right = {
 					style = "none"
 				}
-			}
+			},
+			padding_right = 1,
 		},
 		file = {
 			icon = "󰈚",
 			padding_left = 1,
+			padding_right = 1,
 			style = "none",
 		},
 		git_branch = {
@@ -53,6 +55,7 @@ return {
 		indent = {
 			icon = "󰌒",
 			padding_left = 1,
+			padding_right = 1,
 			style = "none",
 		},
 		lsp = {
@@ -62,6 +65,7 @@ return {
 		position = {
 			icon = "󰀹",
 			padding_left = 1,
+			padding_right = 1,
 			format = "Ln %l, Col %c",
 			style = "none",
 		},

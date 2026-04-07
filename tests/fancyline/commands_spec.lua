@@ -63,16 +63,16 @@ describe("fancyline.commands", function()
     it("contains common presets", function()
       local presets = commands.list_presets()
       local found_default = false
-      local found_minimal = false
+      local found_slim = false
       for _, preset in ipairs(presets) do
         if preset == "default" then
           found_default = true
-        elseif preset == "minimal" then
-          found_minimal = true
+        elseif preset == "slim" then
+          found_slim = true
         end
       end
       assert.is_true(found_default)
-      assert.is_true(found_minimal)
+      assert.is_true(found_slim)
     end)
   end)
 

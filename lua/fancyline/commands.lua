@@ -85,7 +85,7 @@ end
 function M.list_presets()
   local base = get_plugin_dir_cached()
   if not base then
-    return { "default", "minimal", "standard", "full" } -- Fallback
+    return { "default" } -- Fallback
   end
   local presets_dir = base .. "/lua/fancyline/presets"
   local presets = list_files_in_dir(presets_dir, true)
@@ -97,20 +97,9 @@ function M.list_presets()
   end
   table.sort(filtered)
   if #filtered == 0 then
-    return { "default", "minimal", "standard", "full" } -- Fallback
+    return { "default" } -- Fallback
   end
   return filtered
-end
-
-function M.list_components()
-  local base = get_plugin_dir_cached()
-  if not base then
-    return {} -- No fallback
-  end
-  local components_dir = base .. "/lua/fancyline/components"
-  local components = list_files_in_dir(components_dir, true)
-  table.sort(components)
-  return components
 end
 
 local function complete(_, line)
@@ -118,7 +107,7 @@ local function complete(_, line)
   local n = #l - 1
 
   if n == 0 then
-    return { "enable", "disable", "toggle", "refresh", "reload", "theme", "preset", "config", "components" }
+    return { "enable", "disable", "toggle", "refresh", "reload", "theme", "preset", "config" }
   end
 
   if n == 1 then
@@ -146,7 +135,7 @@ end
 
 local function cmd_toggle()
   local fancyline = require("fancyline")
-  if vim.o.statusline ~= "" then
+  if fancyline.is_enabled() then
     fancyline.disable()
     vim.notify("[FancyLine] Disabled", vim.log.levels.INFO)
   else
@@ -217,11 +206,6 @@ local function cmd_config()
   end
 end
 
-local function cmd_components()
-  local components = M.list_components()
-  vim.notify("[FancyLine] Components: " .. table.concat(components, ", "), vim.log.levels.INFO)
-end
-
 local subcommands = {
   enable = cmd_enable,
   disable = cmd_disable,
@@ -231,7 +215,6 @@ local subcommands = {
   theme = cmd_theme,
   preset = cmd_preset,
   config = cmd_config,
-  components = cmd_components,
 }
 
 local function execute_command(args)
@@ -261,8 +244,7 @@ function M.setup()
         .. "  reload       - Reload highlights\n"
         .. "  theme <name> - Change theme\n"
         .. "  preset <name> - Change preset\n"
-        .. "  config       - Show current config\n"
-        .. "  components   - List available components",
+        .. "  config       - Show current config",
         vim.log.levels.INFO,
         { title = "FancyLine" }
       )

@@ -295,9 +295,7 @@ Available presets:
 
 minimal          Minimal mode + file only
 default          Standard layout with git and lsp
-standard         Extended default with diagnostics
-full             Full featured with many components
-git-focused      Optimized for git workflows
+slim             Minimal with text-only components
 vscode           VSCode-like statusline
 slim             Compact slim design
 rounded          Rounded borders throughout
@@ -308,7 +306,7 @@ arrows           Arrow-based separators
 Example usage: >
 
     require("fancyline").setup({
-        preset = "minimal",
+        preset = "slim",
     })
 
  ==============================================================================
@@ -327,9 +325,8 @@ Example usage: >
      :FancyLine theme <name>    Change theme dynamically
      :FancyLine preset <name>   Change preset dynamically
      :FancyLine config          Show current configuration
-     :FancyLine components      List all available components
 
- Examples: >
+  Examples: >
 
      :FancyLine toggle              " Toggle statusline on/off
      :FancyLine preset rounded      " Switch to rounded preset

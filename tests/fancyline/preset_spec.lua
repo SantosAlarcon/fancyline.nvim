@@ -24,30 +24,6 @@ describe("fancyline.presets", function()
       assert.is_table(preset.components)
     end)
 
-    it("loads minimal preset", function()
-      local preset = presets.load("minimal")
-      assert.is_not_nil(preset)
-      assert.is_table(preset.sections)
-    end)
-
-    it("loads standard preset", function()
-      local preset = presets.load("standard")
-      assert.is_not_nil(preset)
-      assert.is_table(preset.sections)
-    end)
-
-    it("loads full preset", function()
-      local preset = presets.load("full")
-      assert.is_not_nil(preset)
-      assert.is_table(preset.sections)
-    end)
-
-    it("loads git-focused preset", function()
-      local preset = presets.load("git-focused")
-      assert.is_not_nil(preset)
-      assert.is_table(preset.sections)
-    end)
-
     it("loads vscode preset", function()
       local preset = presets.load("vscode")
       assert.is_not_nil(preset)
@@ -209,7 +185,7 @@ describe("fancyline.presets", function()
   end)
 
   describe("all presets have required structure", function()
-    local preset_names = { "minimal", "default", "standard", "full", "git-focused", "vscode", "slim", "brick" }
+    local preset_names = { "default", "vscode", "slim", "brick" }
 
     for _, name in ipairs(preset_names) do
       it(name .. " has sections", function()
