@@ -319,6 +319,8 @@ function M.invalidate(names)
 	else
 		component_cache = {}
 	end
+	-- Also invalidate theme cache so shades/modes are re-resolved
+	border.invalidate_theme_cache()
 end
 
 ---Register a custom component provider.

@@ -263,6 +263,9 @@ function M.apply(theme)
     theme = M.get("tokyonight")
   end
 
+  -- Invalidate theme cache so renderer gets fresh colors
+  M.invalidate_cache()
+
   -- Helper to batch set highlights
   local function set_hl(group, opts)
     vim.api.nvim_set_hl(0, group, opts)

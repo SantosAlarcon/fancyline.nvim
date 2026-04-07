@@ -167,6 +167,11 @@ local function cmd_theme(args)
     return
   end
 
+  -- Update global theme config so renderer uses correct theme
+  _G.fancyline_theme_config = _G.fancyline_theme_config or {}
+  _G.fancyline_theme_config.name = theme_name
+  _G.fancyline_theme_config.variant = theme_def.variant
+
   themes.apply(theme_def)
   require("fancyline.renderer").invalidate()
   require("fancyline").refresh()

@@ -33,6 +33,8 @@ local function update_theme_cache()
 	cached_theme = current
 	cached_modes = current.modes or {}
 	cached_shades = current.shades or {}
+	-- DEBUG
+	print(string.format("update_theme_cache: theme=%s, shades=%s", current.name or "nil", vim.inspect(cached_shades)))
 end
 
 ---Common color combinations for pre-generated highlights
@@ -144,6 +146,8 @@ local function resolve_shade_color(color_spec)
 			update_theme_cache()
 		end
 		local shade_key = "shade_" .. shade_match
+		-- DEBUG
+		print(string.format("resolve_shade: input=%s, shade_key=%s, cached_value=%s", color_spec, shade_key, vim.inspect(cached_shades[shade_key])))
 		if cached_shades[shade_key] then
 			return cached_shades[shade_key]
 		end
@@ -179,8 +183,8 @@ local function get_hl_name(name, fg, bg, bold)
 		content_hl_counter = content_hl_counter + 1
 		local hl_name = "FancylineDynamic" .. content_hl_counter
 		vim.api.nvim_set_hl(0, hl_name, {
-			fg = fg,
-			bg = bg,
+			fg = fg == nil and "NONE" or fg,
+			bg = bg == nil and "NONE" or bg,
 			bold = bold or false,
 		})
 		content_cache[key] = hl_name
@@ -262,6 +266,9 @@ function M.render_component(icon, text, style_name, highlight, fg, bg, state, te
 	-- Resolve "mode" and "shade_X" colors
 	fg = resolve_shade_color(resolve_mode_color(fg, state))
 	bg = resolve_shade_color(resolve_mode_color(bg, state))
+
+	-- DEBUG
+	print(string.format("render_component: style=%s, fg=%s, bg=%s, pl=%d, pr=%d", style_name or "nil", fg or "nil", bg or "nil", padding_left or 0, padding_right or 0))
 
 	-- Get dynamic highlight with custom fg/bg if provided
 	local hl = get_hl_name(base_hl, fg, bg, text_bold)
