@@ -108,6 +108,32 @@ require("fancyline").setup({
 | `pill` | Rounded borders on both sides |
 | `brick` | Rectangle borders on both sides |
 
+### Preset screenshots
+
+Default
+![Default preset](/screenshots/default-preset.webp)
+
+Slim
+![Slim preset](/screenshots/slim-preset.webp)
+
+VSCode
+![VSCode preset](/screenshots/vscode-preset.webp)
+
+Angular
+![Angular preset](/screenshots/angular-preset.webp)
+
+Diagonal
+![Diagonal preset](/screenshots/diagonal-preset.webp)
+
+Arrows
+![Arrows preset](/screenshots/arrows-preset.webp)
+
+Pill
+![Pill preset](/screenshots/pill-preset.webp)
+
+Pill
+![Brick preset](/screenshots/brick-preset.webp)
+
 ### Themes
 
 Themes auto-detect from your colorscheme:
