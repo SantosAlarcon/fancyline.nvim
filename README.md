@@ -125,8 +125,8 @@ Angular
 Diagonal
 ![Diagonal preset](/screenshots/diagonal-preset.webp)
 
-Arrows
-![Arrows preset](/screenshots/arrows-preset.webp)
+Arrow
+![Arrow preset](/screenshots/arrow-preset.webp)
 
 Pill
 ![Pill preset](/screenshots/pill-preset.webp)
