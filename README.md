@@ -23,14 +23,14 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
   - [Dynamic Colors](#dynamic-colors)
 - [Components Reference](#components-reference)
 - [API](#api)
-- [Project Structure](#project-structure)
+- [FAQ](#faq)
 - [Testing](#testing)
 
 ## Features
 
 - **33 Components** - Mode, git info, file, diagnostics, LSP, position, and more
 - **20 Built-in Themes** - Auto-detects your colorscheme (tokyonight, catppuccin, dracula, nord, github, material with 5 variants, and more)
-- **9 Presets** - From slim to feature-rich, with styled border variants
+- **9 Presets** - Layout presets + styled border variants
 - **Custom Borders** - Fully customizable with separate styles and colors for each side
 - **Icon Providers** - Supports mini.icons, nvim-web-devicons, or fallback icons
 - **Theme Variants** - Automatic dark/light variant detection
@@ -53,8 +53,8 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
   lazy = false,
   priority = 1000,
   dependencies = {
-    "echasnovski/mini.nvim",  -- recommended
-    "nvim-tree/nvim-web-devicons",  -- fallback
+    "echasnovski/mini.nvim",       -- recommended
+    "nvim-tree/nvim-web-devicons", -- fallback
   },
 }
 ```
@@ -66,8 +66,6 @@ require("fancyline").setup()
 ```
 
 ## Commands
-
-FancyLine provides the `:FancyLine` command with subcommands for runtime control:
 
 | Command | Description |
 |---------|-------------|
@@ -82,53 +80,34 @@ FancyLine provides the `:FancyLine` command with subcommands for runtime control
 
 Tab autocompletion works for theme and preset names.
 
-## Windows Performance
-
-If fancyline feels slow on Windows, the issue is likely Windows Defender scanning each `git` process spawn. To fix:
-
-### Option 1: Add Neovim to Windows Defender Exclusions (Recommended)
-
-1. Open Windows Security
-2. Go to Virus & threat protection > Manage settings
-3. Under Exclusions, click "Add an exclusion"
-4. Select "Executable" and add `nvim.exe`
-
-### Option 2: Use Git Bash Shell
-
-Add to your Neovim config:
-
-```lua
-vim.o.shell = vim.fn.executable("bash") == 1 and "bash.exe" or vim.o.shell
-```
-
-### Option 3: Use WSL
-
-Running Neovim on Windows Subsystem for Linux bypasses these issues entirely.
-
 ## Configuration
 
 ### Presets
 
 ```lua
 require("fancyline").setup({
-  preset = "default",  -- or "vscode", "slim", "pill", "brick"
+  preset = "default",  -- or "vscode", "slim"
 })
 ```
 
-Available presets:
+**Layout Presets:**
 
 | Preset | Description |
 |--------|-------------|
-| `default` | NvChad-style with mode, git, file, diagnostics, LSP |
-| `slim` | Minimal with text-only components |
+| `default` | NvChad-style: mode, git, file, diagnostics, LSP |
 | `vscode` | VS Code-style layout |
-| `slim` | Minimal with git |
-| `rounded` | With rounded borders |
-| `angular` | With square borders |
-| `diagonal` | With slanted borders |
-| `arrows` | With arrow borders |
-| `pill` | With rounded borders in both sides |
-| `brick` | With rectangle borders in both sides |
+| `slim` | Minimal with text-only components |
+
+**Border Presets:**
+
+| Preset | Description |
+|--------|-------------|
+| `rounded` | Rounded borders |
+| `angular` | Square borders |
+| `diagonal` | Slanted borders |
+| `arrows` | Arrow borders |
+| `pill` | Rounded borders on both sides |
+| `brick` | Rectangle borders on both sides |
 
 ### Themes
 
@@ -228,15 +207,18 @@ Note: Bold styling only applies to the text content, not the icon or border.
 
 ## Components Reference
 
+### Git
 | Component | Description |
-|-----------|-------------|
-| `mode` | Vim mode indicator |
-| `file` | Current file name |
+|------------|-------------|
 | `git_branch` | Git branch name |
 | `git_signs` | Git hunks and untracked files |
 | `git_diff` | Git diff summary (+added, ~changed, ?untracked) |
 | `branch_status` | Branch status (ahead/behind) |
 | `commit_msg` | Current commit message |
+
+### LSP / Diagnostics
+| Component | Description |
+|------------|-------------|
 | `errors` | LSP errors count |
 | `warnings` | LSP warnings count |
 | `infos` | LSP info count |
@@ -245,38 +227,102 @@ Note: Bold styling only applies to the text content, not the icon or border.
 | `lsp` | Active LSP servers |
 | `lsp_progress` | LSP progress messages |
 | `lsp_clients` | LSP clients with versions |
-| `dap` | DAP debugger status |
-| `treesitter` | Treesitter language |
+
+### File
+| Component | Description |
+|-----------|-------------|
+| `file` | Current file name |
+| `filetype` | File type with icon |
 | `encoding` | File encoding |
 | `fileformat` | File format (LF/CRLF) |
 | `filesize` | File size |
 | `indent` | Indentation settings |
-| `position` | Cursor position |
+| `checktime` | File check time/reload status |
+| `reload` | File reload indicator |
+
+### UI / Status
+| Component | Description |
+|-----------|-------------|
+| `mode` | Vim mode indicator |
+| `position` | Cursor position (Ln, Col) |
 | `bufnr` | Buffer number |
 | `tabnr` | Tab number |
 | `cwd` | Current working directory |
 | `project` | Project name |
 | `quickfix` | Quickfix list count |
-| `filetype` | File type with icon |
-| `checktime` | File check time/reload status |
 | `macro_recording` | Macro recording indicator |
 | `search_stats` | Search statistics |
 | `spell` | Spell check indicator |
-| `reload` | File reload indicator |
+
+### Extra
+| Component | Description |
+|-----------|-------------|
+| `dap` | DAP debugger status |
+| `treesitter` | Treesitter language |
 
 ## API
 
 ```lua
-require("fancyline").setup(opts)    -- Configure
-require("fancyline").render()       -- Get statusline string
-require("fancyline").enable()       -- Enable
+require("fancyline").setup(opts)      -- Configure
+require("fancyline").render()        -- Get statusline string
+require("fancyline").enable()        -- Enable
 require("fancyline").disable()       -- Disable
 require("fancyline").toggle()        -- Toggle enable/disable
 require("fancyline").refresh(force)  -- Force refresh (bypass rate limiter if true)
-require("fancyline").reload()       -- Reload highlights
-require("fancyline").get_config()   -- Get current config
+require("fancyline").reload()        -- Reload highlights
+require("fancyline").get_config()    -- Get current config
 require("fancyline").set_preset(name) -- Change preset dynamically
 ```
+
+## FAQ
+
+### Why is fancyline slow on Windows?
+
+Windows Defender scans every `git` process spawn, causing delays. Fix:
+
+**Option 1: Add Neovim to Windows Defender Exclusions (Recommended)**
+1. Open Windows Security
+2. Go to Virus & threat protection > Manage settings
+3. Under Exclusions, click "Add an exclusion"
+4. Select "Executable" and add `nvim.exe`
+
+**Option 2: Use Git Bash Shell**
+```lua
+vim.o.shell = vim.fn.executable("bash") == 1 and "bash.exe" or vim.o.shell
+```
+
+**Option 3: Use WSL**
+Running Neovim on Windows Subsystem for Linux bypasses these issues entirely.
+
+### How do I change themes at runtime?
+
+```vim
+:FancyLine theme tokyonight
+```
+
+Use tab completion to see available themes.
+
+### How do I create a custom preset?
+
+```lua
+require("fancyline").setup({
+  preset = "default",  -- start from a preset
+  sections = {
+    left = { "mode", "file", "git_branch", "git_diff" },
+    center = {},
+    right = { "diagnostics", "lsp", "filetype", "position" },
+  },
+  components = {
+    mode = { icon = " 󰊤 ", bold = true },
+    git_branch = { icon = "  " },
+    -- ... customize any component
+  },
+})
+```
+
+### How do I add icons?
+
+FancyLine auto-detects [mini.icons](https://github.com/echasnovski/mini.nvim) or [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons). Just install one of them - no extra config needed.
 
 ## Project Structure
 
@@ -291,18 +337,20 @@ lua/fancyline/
 ├── presets/
 │   ├── init.lua        -- Preset loader
 │   ├── default.lua     -- NvChad-style
-
 │   ├── vscode.lua      -- VS Code-style
-│   ├── rounded.lua     -- With rounded borders
-│   ├── angular.lua     -- With square borders
-│   ├── diagonal.lua    -- With slanted borders
-│   └── arrows.lua      -- With arrow borders
+│   ├── slim.lua        -- Minimal
+│   ├── rounded.lua     -- Rounded borders
+│   ├── angular.lua     -- Square borders
+│   ├── diagonal.lua    -- Slanted borders
+│   ├── arrows.lua      -- Arrow borders
+│   ├── pill.lua        -- Pill borders
+│   └── brick.lua       -- Brick borders
 ├── components/         -- 33 components
 ├── extensions/         -- Telescope & Oil support
 ├── renderer/
 │   ├── init.lua        -- Component renderer
 │   └── border.lua      -- Border rendering
-└── utils/             -- Git, LSP, diagnostics utilities
+└── utils/              -- Git, LSP, diagnostics utilities
 ```
 
 ## Testing
