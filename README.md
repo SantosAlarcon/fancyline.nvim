@@ -102,7 +102,6 @@ require("fancyline").setup({
 
 | Preset | Description |
 |--------|-------------|
-| `rounded` | Rounded borders |
 | `angular` | Square borders |
 | `diagonal` | Slanted borders |
 | `arrows` | Arrow borders |
@@ -339,7 +338,6 @@ lua/fancyline/
 │   ├── default.lua     -- NvChad-style
 │   ├── vscode.lua      -- VS Code-style
 │   ├── slim.lua        -- Minimal
-│   ├── rounded.lua     -- Rounded borders
 │   ├── angular.lua     -- Square borders
 │   ├── diagonal.lua    -- Slanted borders
 │   ├── arrows.lua      -- Arrow borders

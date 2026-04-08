@@ -297,8 +297,6 @@ minimal          Minimal mode + file only
 default          Standard layout with git and lsp
 slim             Minimal with text-only components
 vscode           VSCode-like statusline
-slim             Compact slim design
-rounded          Rounded borders throughout
 angular          Angular bracket style
 diagonal         Diagonal style separators
 arrows           Arrow-based separators
@@ -329,7 +327,7 @@ Example usage: >
   Examples: >
 
      :FancyLine toggle              " Toggle statusline on/off
-     :FancyLine preset rounded      " Switch to rounded preset
+     :FancyLine preset angular      " Switch to angular preset
      :FancyLine theme dracula      " Switch to dracula theme
      :FancyLine config             " View current config
 

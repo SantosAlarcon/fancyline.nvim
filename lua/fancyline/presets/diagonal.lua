@@ -16,7 +16,7 @@ return {
 			padding_left = 1,
 			border = {
 				left = {
-					style = "slanted", fg = "mode"
+					style = "square", fg = "mode"
 				},
 				right = {
 					style = "slanted", fg = "shade_4"
@@ -38,7 +38,7 @@ return {
 			padding_left = 1,
 			border = {
 				left = {
-					style = "slanted",
+					style = "square",
 					fg = "shade_9"
 				},
 				right = {
@@ -57,7 +57,7 @@ return {
 			padding_left = 1,
 			border = {
 				left = {
-					style = "slanted",
+					style = "square",
 					fg = "shade_9"
 				},
 				right = {
@@ -76,7 +76,7 @@ return {
 			padding_left = 1,
 			border = {
 				left = {
-					style = "slanted",
+					style = "square",
 					fg = "shade_9"
 				},
 				right = {
@@ -98,7 +98,7 @@ return {
 			},
 			padding_left = 1,
 			border = {
-				left = { style = "slanted", fg = "shade_10" },
+				left = { style = "square", fg = "shade_10" },
 				right = { style = "slanted", fg = "shade_2" },
 			},
 			bg = "shade_2"
@@ -110,7 +110,7 @@ return {
 			},
 			padding_left = 1,
 			border = {
-				left = { style = "slanted", fg = "shade_10" },
+				left = { style = "square", fg = "shade_10" },
 				right = { style = "slanted", fg = "shade_2" },
 			},
 			bg = "shade_2"
@@ -124,7 +124,7 @@ return {
 				bg = "shade_10"
 			},
 			border = {
-				left = { style = "slanted", fg = "shade_10" },
+				left = { style = "square", fg = "shade_10" },
 				right = { style = "slanted", fg = "shade_2" },
 			},
 			bg = "shade_2"
