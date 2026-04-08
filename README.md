@@ -131,7 +131,7 @@ Arrow
 Pill
 ![Pill preset](/screenshots/pill-preset.webp)
 
-Pill
+Brick
 ![Brick preset](/screenshots/brick-preset.webp)
 
 ### Themes
