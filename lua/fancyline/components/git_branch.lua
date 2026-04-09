@@ -18,36 +18,30 @@ function M.provider(opts, ctx)
     return nil
   end
 
-  -- Get icon from opts or use default
-  local icon_symbol = " "
+  -- Get icon only if explicitly configured
+  local icon = nil
   if opts.icon then
+    local icon_symbol = ""
     if type(opts.icon) == "table" and opts.icon.symbol then
       icon_symbol = opts.icon.symbol
     elseif type(opts.icon) == "string" then
       icon_symbol = opts.icon
     end
+    if icon_symbol and icon_symbol ~= "" then
+      icon = { symbol = icon_symbol, fg = opts.fg, bg = opts.bg }
+    end
   end
-
-  -- Get style
-  local style = opts.style or "none"
-
-  -- Get colors
-  local fg = opts.fg
-  local bg = opts.bg
-
-  -- Get border config
-  local border = opts.border
 
   return {
     text = branch,
-    icon = { symbol = icon_symbol, fg = fg, bg = bg },
-    style = style,
+    icon = icon,
+    style = opts.style or "none",
     highlight = "FancylineGitBranch",
     state = "clean",
-    fg = fg,
-    bg = bg,
+    fg = opts.fg,
+    bg = opts.bg,
     bold = opts.bold,
-    border = border,
+    border = opts.border,
   }
 end
 
