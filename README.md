@@ -30,7 +30,7 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 
 - **33 Components** - Mode, git info, file, diagnostics, LSP, position, and more
 - **20 Built-in Themes** - Auto-detects your colorscheme (tokyonight, catppuccin, dracula, nord, github, material with 5 variants, and more)
-- **9 Presets** - Layout presets + styled border variants
+- **8 Presets** - Layout presets + styled border variants
 - **Custom Borders** - Fully customizable with separate styles and colors for each side
 - **Icon Providers** - Supports mini.icons, nvim-web-devicons, or fallback icons
 - **Theme Variants** - Automatic dark/light variant detection
@@ -57,6 +57,13 @@ A beautiful, fast, and highly configurable Neovim statusline written in Lua.
     "nvim-tree/nvim-web-devicons", -- fallback
   },
 }
+```
+
+### Vim Pack
+```lua
+vim.pack.add({
+    "SantosAlarcon/fancyline.nvim"
+})
 ```
 
 ## Quick Start
