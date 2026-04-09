@@ -2,6 +2,8 @@
 
 A beautiful, fast, and highly configurable Neovim statusline written in Lua.
 
+![](/screenshots/screenshot.webp)
+
 [![Neovim](https://img.shields.io/badge/Neovim-0.10+-57A143?style=flat-square&logo=neovim)](https://neovim.io)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
