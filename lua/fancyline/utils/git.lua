@@ -55,6 +55,7 @@ local function parse_status_header(header)
 	for line in header:gmatch("[^\r\n]+") do
 		local branch_match = line:match("^## ([^%s].*)$")
 		if branch_match then
+			-- Extract ahead/behind counts
 			local ahead_match = branch_match:match("ahead%s+(%d+)")
 			local behind_match = branch_match:match("behind%s+(%d+)")
 
@@ -65,9 +66,19 @@ local function parse_status_header(header)
 				behind = tonumber(behind_match) or 0
 			end
 
-			-- local branch_only = branch_match:gsub("%s+", " "):gsub("%s+ahead%s+%d+", "")
-			-- 	:gsub("%s+behind%s+%d+", ""):gsub("%s+", "")
-			local branch_only = branch_match.gsub(branch_match, "%S.......", "")
+			-- Extract clean branch name
+			-- Format: "branch" or "branch...origin/branch" or "branch...origin/branch [ahead X, behind Y]"
+			local branch_only = branch_match
+				:gsub("%s*%[.*%]", "") -- Remove [ahead X, behind Y]
+				:gsub("%s+", " ")      -- Normalize spaces
+				:gsub("^%s+", "")       -- Trim leading
+				:gsub("%s+$", "")       -- Trim trailing
+
+			-- If has ... (upstream reference), take only the first part
+			if branch_only:match("%.%.") then
+				branch_only = branch_only:match("^([^%.]+)")
+			end
+
 			if branch_only and branch_only ~= "" and branch_only ~= "(no branch)" then
 				branch = branch_only
 			elseif not branch then
