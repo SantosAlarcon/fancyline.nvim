@@ -1,3 +1,5 @@
+![FancyLine Logo](FancylineLogo.png)
+
 # Fancyline
 
 A beautiful, fast, and highly configurable Neovim statusline written in Lua.
